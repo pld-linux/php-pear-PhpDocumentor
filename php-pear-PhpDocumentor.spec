@@ -28,7 +28,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %description
 The phpDocumentor tool is a standalone auto-documentor similar to
 JavaDoc written in PHP. It differs from PHPDoc in that it is MUCH
-faster, parses a much wider range of php files, and comes with many
+faster, parses a much wider range of PHP files, and comes with many
 customizations including 11 HTML templates, windows help file CHM
 output, PDF output, and XML DocBook peardoc2 output for use with
 documenting PEAR. In addition, it can do PHPXref source code
@@ -51,7 +51,7 @@ Features (short list):
 - generates a todo list from @todo tags in source
 - generates multiple documentation sets based on @access private,
   @internal and {@internal} tags
-- example php files can be placed directly in documentation with
+- example PHP files can be placed directly in documentation with
   highlighting and phpxref linking using the @example tag
 - linking between external manual and API documentation is possible at
   the sub-section level in all output formats
@@ -68,7 +68,7 @@ In PEAR status of this package is: %{_status}.
 %description -l pl
 phpDocumentor jest podobnym do JavaDoc samodzielnym narzêdziem do
 automatycznego tworzenia dokumentacji napisanym w PHP. W porównaniu do
-PHPDoc jest du¿o szybszy, parsuje wiêkszy zakres plików php, oraz
+PHPDoc jest du¿o szybszy, parsuje wiêkszy zakres plików PHP, oraz
 umo¿liwia dostosowanie do upodobañ u¿ytkownika za pomoc± miêdzy innymi
 11 szablonów HTML, mo¿liwo¶ci zapisu plików w formacie plików pomocy
 Windows (CHM), PDF czy XML DocBook peardoc2 (u¿ywanym przy tworzeniu
@@ -92,7 +92,7 @@ Mo¿liwo¶ci (krótka lista):
 - generuje listê do zrobienia korzystaj±c ze znaczników @todo w kodzie
 - generuje ró¿n± dokumentacjê w zale¿no¶ci od znaczników @access
   private, @internal i {@internal}
-- przyk³adowe pliki php mog± byæ umieszczane bezpo¶rednio w
+- przyk³adowe pliki PHP mog± byæ umieszczane bezpo¶rednio w
   dokumentacji z pod¶wietlaniem sk³adni i po³±czeniami phpxref za
   pomoc± znacznika @example
 - po³±czenia pomiêdzy zewnêtrznym podrêcznikiem i dokumentacj± API
