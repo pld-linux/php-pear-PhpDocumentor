@@ -19,6 +19,7 @@ Group:		Development/Languages/PHP
 Source0:	http://pear.php.net/get/%{_pearname}-%{version}.tgz
 # Source0-md5:	874aa1d7deeff98a272ea204190928fe
 Patch0:		%{name}-includes_fix.patch
+Patch1:		%{name}-html_treemenu_includes_fix.patch
 URL:		http://pear.php.net/
 BuildRequires:	rpm-php-pearprov >= 4.0.2-98
 Requires:	php-pear
@@ -113,6 +114,7 @@ Ta klasa ma w PEAR status: %{_status}.
 %prep
 %setup -q -c
 %patch0 -p1
+%patch1 -p0
 
 %build
 cd %{_pearname}-%{version}
@@ -126,7 +128,7 @@ rm -rf $RPM_BUILD_ROOT
 # Create directory tree (guess it could be simplified... to be done....)
 install -d $RPM_BUILD_ROOT%{_bindir}
 install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/{scripts,user}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/HTML_TreeMenu-1.1.2/images
+#install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/HTML_TreeMenu-1.1.2/images
 install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/docbuilder/{images,includes}
 install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/media/images/earthli
 install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/CHM/default/templates/default/{templates/media,templates_c}
@@ -146,8 +148,8 @@ install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Smarty-2.5.0/l
 # Copy files (now I realize how wonderfull is make install...)
 install %{_pearname}-%{version}/phpdoc $RPM_BUILD_ROOT%{_bindir}
 install %{_pearname}-%{version}/*.{php,ini}  $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}
-install %{_pearname}-%{version}/HTML_TreeMenu-1.1.2/TreeMenu.* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/HTML_TreeMenu-1.1.2
-install %{_pearname}-%{version}/HTML_TreeMenu-1.1.2/images/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/HTML_TreeMenu-1.1.2/images
+#install %{_pearname}-%{version}/HTML_TreeMenu-1.1.2/TreeMenu.* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/HTML_TreeMenu-1.1.2
+#install %{_pearname}-%{version}/HTML_TreeMenu-1.1.2/images/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/HTML_TreeMenu-1.1.2/images
 install %{_pearname}-%{version}/docbuilder/*.{php,html} $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/docbuilder
 install %{_pearname}-%{version}/docbuilder/images/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/docbuilder/images
 install %{_pearname}-%{version}/docbuilder/includes/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/docbuilder/includes
