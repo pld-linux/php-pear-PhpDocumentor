@@ -1,0 +1,21 @@
+diff -burN php-pear-PhpDocumentor-1.2.1-orig/PhpDocumentor-1.2.1/new_phpdoc.php php-pear-PhpDocumentor-1.2.1/PhpDocumentor-1.2.1/new_phpdoc.php
+--- php-pear-PhpDocumentor-1.2.1-orig/PhpDocumentor-1.2.1/new_phpdoc.php	Tue Jun  3 22:34:57 2003
++++ php-pear-PhpDocumentor-1.2.1/PhpDocumentor-1.2.1/new_phpdoc.php	Tue Jul  8 23:26:59 2003
+@@ -51,7 +51,7 @@
+ /**
+ * common file information
+ */
+-include_once("phpDocumentor/common.inc.php");
++include_once("PhpDocumentor/phpDocumentor/common.inc.php");
+ 
+ // find the .ini directory by parsing phpDocumentor.ini and extracting _phpDocumentor_options[userdir]
+ $ini = phpDocumentor_parse_ini_file($_phpDocumentor_install_dir . PATH_DELIMITER . 'phpDocumentor.ini', true);
+@@ -73,7 +73,7 @@
+ ?>
+ <script src="HTML_TreeMenu-1.1.2/TreeMenu.js" language="JavaScript" type="text/javascript"></script>
+                        <?php
+-        include_once('HTML_TreeMenu-1.1.2/TreeMenu.php');
++        include_once('PhpDocumentor/HTML_TreeMenu-1.1.2/TreeMenu.php');
+         set_time_limit(0);    // six minute timeout
+         ini_set("memory_limit","256M");
+         /**
