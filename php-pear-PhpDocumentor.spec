@@ -63,7 +63,7 @@ Features (short list):
 - user .ini files can be used to control output, multiple outputs can
   be generated at once
 
-This class has in PEAR status: %{_status}.
+In PEAR status of this package is: %{_status}.
 
 %description -l pl
 phpDocumentor jest podobnym do JavaDoc samodzielnym narzêdziem do
