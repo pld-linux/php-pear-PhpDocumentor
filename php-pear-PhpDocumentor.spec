@@ -4,8 +4,7 @@
 # - maybe PhpDocumentor.ini should go to /etc/php ?
 
 %include	/usr/lib/rpm/macros.php
-
-%define         _class          PhpDocumentor
+%define		_class		PhpDocumentor
 %define		_status		stable
 %define		_pearname	%{_class}
 
