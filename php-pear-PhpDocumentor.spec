@@ -1,7 +1,6 @@
 # ToDo:
 # - solve requires issue (something like patch0, but a bit extended?)
 # - simplify creating dirs in %%install
-# - fix pl description (especially those marked with [FIXME])
 # - maybe PhpDocumentor.ini should go to /etc/php ?
 
 %include	/usr/lib/rpm/macros.php
@@ -10,8 +9,8 @@
 %define		_status		stable
 %define		_pearname	%{_class}
 
-Summary:	%{_pearname} - provides automatic documenting of php api directly from source
-Summary(pl):	%{_pearname} - automatyczne tworzenie dokumentacji api php prosto ze ¼róde³
+Summary:	%{_pearname} - provides automatic documenting of PHP API directly from source
+Summary(pl):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto ze ¼róde³
 Name:		php-pear-%{_pearname}
 Version:	1.2.1
 Release:	0.1
@@ -68,45 +67,46 @@ This class has in PEAR status: %{_status}.
 
 %description -l pl
 phpDocumentor jest podobnym do JavaDoc samodzielnym narzêdziem do
-automatycznego tworzenia dokumentacji. W porównaniu do PHPDoc jest
-du¿o szybszy, parsuje wiêkszy zakres plików php, oraz umo¿liwia
-dostosowanie do upodobañ u¿ytkownika za pomoc± miêdzy innymi 11
-szablonów HTML, formacie plików pomocy Windows (CHM), PDF, czy XML
-DocBook peardoc2 u¿ywanego przy tworzeniu dokumentacji do PEAR.
-Dodatkowo, phpDocumentor mo¿e pod¶wietliæ kod ¼ród³owy i ³±czenia
-za pomoc± PHPXref. [FIXME]
+automatycznego tworzenia dokumentacji napisanym w PHP. W porównaniu do
+PHPDoc jest du¿o szybszy, parsuje wiêkszy zakres plików php, oraz
+umo¿liwia dostosowanie do upodobañ u¿ytkownika za pomoc± miêdzy innymi
+11 szablonów HTML, mo¿liwo¶ci zapisu plików w formacie plików pomocy
+Windows (CHM), PDF czy XML DocBook peardoc2 (u¿ywanym przy tworzeniu
+dokumentacji do PEAR). Ponadto phpDocumentor mo¿e pod¶wietlaæ i ³±czyæ
+kod ¼ród³owy za pomoc± PHPXref.
 
-Cechy (krótka lista):
+Mo¿liwo¶ci (krótka lista):
 - zapis do formatu HTML, PDF (bezpo¶rednio), CHM (za pomoc±
   kompilatora plików pomocy windows), XML DocBook
 - bardzo szybki
-- interfejs www oraz CLI
-- w pe³ni konfigurowywalny zapis za pomoc± szablonów oparty o Smarty
-- rozpoznaje dokumentacjê JavaDoc za pomoc± specjalnych tagów
-  dostosowanych do PHP 4 [FIXME]
-- automatyczne linkowanie, diagramy dziedziczenia klas i (...) [FIXME]
-- konfigurowywalne pod¶wietlanie kodu ¼ród³owego z cross-referencj±
-  phpxref [FIXME]
+- interfejs WWW oraz z linii poleceñ
+- w pe³ni konfigurowalny zapis z u¿yciem szablonów opartych o Smarty
+- rozpoznaje dokumentacjê JavaDoc za pomoc± specjalnych znaczników
+  dostosowanych do PHP 4
+- automatyczne ³±czenie, diagramy dziedziczenia klas i inteligentne
+  przes³anianie
+- konfigurowalne pod¶wietlanie kodu ¼ród³owego z odno¶nikami w stylu
+  phpxref
 - parsuje standardowe pliki README/CHANGELOG/INSTALL/FAQ i do³±cza je
   bezpo¶rednio do dokumentacji
-- generuje listê do zrobienia krozystaj±c z tagów @todo w ¼ród³ach
-- generuje ró¿n± dokumetnacjê w zale¿no¶ci od tagów @access private,
-  @internal i {@internal}
+- generuje listê do zrobienia korzystaj±c ze znaczników @todo w kodzie
+- generuje ró¿n± dokumentacjê w zale¿no¶ci od znaczników @access
+  private, @internal i {@internal}
 - przyk³adowe pliki php mog± byæ umieszczane bezpo¶rednio w
-  dokumentacji z podswietlaniem sk³adni i po³±czeniami phpxref za pomoc±
-  taga @example
+  dokumentacji z pod¶wietlaniem sk³adni i po³±czeniami phpxref za
+  pomoc± znacznika @example
 - po³±czenia pomiêdzy zewnêtrznym podrêcznikiem i dokumentacj± API
-  jest mo¿liwe na poziomie podsekcji w ka¿dym rodzaju formatu
-  wyj¶ciowego
-- ³atwo rozszerzalne za pomoc± Convertera dla specyficznych potrzeb
+  jest mo¿liwe na poziomie podsekcji we wszystkich formatach
+  wyj¶ciowych
+- ³atwo rozszerzalny za pomoc± Convertera dla specyficznych potrzeb
   dokumentacji
-- pe³na dokumentacja ka¿dej cechy, podrêcznik mo¿e byæ wygenerowany
-  bezpo¶rednio z kodu ¼ród³owego za pomoc± "phpdoc -c makedocs" w
-  dowolnie wybranym formacie
+- pe³na dokumentacja ka¿dej z mo¿liwo¶ci, podrêcznik mo¿e byæ
+  wygenerowany bezpo¶rednio z kodu ¼ród³owego za pomoc± "phpdoc -c
+  makedocs" w dowolnie wybranym formacie
 - aktualny podrêcznik zawsze dostêpny pod adresem
   http://www.phpdoc.org/manual.php
-- za pomoc± plików .ini mo¿na kontrolowaæ format wyj¶cia,jak równie¿
-  mo¿liwe jest generowanie kilku rodzajów wyj¶æ jednocze¶nie. [FIXME]
+- za pomoc± plików .ini mo¿na kontrolowaæ format wyj¶cia, mo¿na
+  generowaæ kilka dokumentów naraz
 
 Ta klasa ma w PEAR status: %{_status}.
 
@@ -124,44 +124,31 @@ mv -f phpdoc.tmp phpdoc
 rm -rf $RPM_BUILD_ROOT
 
 # Create directory tree (guess it could be simplified... to be done....)
-install -d $RPM_BUILD_ROOT{%{_bindir},%{php_pear_dir}/{,%{_class}}}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/{HTML_TreeMenu-1.1.2,docbuilder,media,phpDocumentor,scripts,user}
+install -d $RPM_BUILD_ROOT%{_bindir}
+install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/{scripts,user}
 install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/HTML_TreeMenu-1.1.2/images
 install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/docbuilder/{images,includes}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/media/images/{,earthli}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/{Converters,Smarty-2.5.0}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/{CHM,CSV,HTML,PDF,XML}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/CHM/default/{,templates/{,default/{,templates/{,media},templates_c}}}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/CSV/dia2code/
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/{Smarty,frames}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/Smarty/templates/{,HandS,PHP,deafault}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/Smarty/templates/HandS/{templates/{,media},templates_c}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/Smarty/templates/PHP/{templates/{,media},templates_c}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/Smarty/templates/default/{templates/{,media},templates_c}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/{,DOM,default,earthli,l0l33t,phpdoc.de,phpedit,phphtmllib}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/default/{templates/{,media/{,images,lib}},templates_c}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/earthli/{templates/{,media/{,images,lib}},templates_c}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/l0l33t/{templates/{,media/{,images,lib}},templates_c}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/phpdoc.de/{templates/{,media/{,images,lib}},templates_c}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/phphtmllib/{templates/{,media/{,images,lib}},templates_c}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/default/{templates/{,media},templates_c}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/earthli/{templates/{,media/{,images}},templates_c}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/l0l33t/{templates/{,media},templates_c}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/phpdoc.de/{templates/{,media},templates_c}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/phpedit/{templates/{,media/{,images,lib}},templates_c}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/phphtmllib/{templates/{,media},templates_c}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/PDF/default/{,templates/{,default/{,templates/{,media},templates_c},fonts}}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/XML/DocBook/{,peardoc2/{,templates/{,default/{,templates,templates_c}}},templates/{,peardoc2/{,templates}}}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Smarty-2.5.0/libs/{,plugins}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/scripts
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/user
+install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/media/images/earthli
+install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/CHM/default/templates/default/{templates/media,templates_c}
+install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/CSV/dia2code
+install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/Smarty/templates/{HandS,PHP,default}/{templates/media,templates_c}
+install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/{default,earthli,l0l33t,phpdoc.de,phphtmllib}/{templates/media/{images,lib},templates_c}
+install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/default/{templates/media,templates_c}
+install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/earthli/{templates/media/images,templates_c}
+install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/l0l33t/{templates/media,templates_c}
+install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/phpdoc.de/{templates/media,templates_c}
+install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/phpedit/{templates/media/{images,lib},templates_c}
+install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/phphtmllib/{templates/media,templates_c}
+install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/PDF/default/templates/{default/{templates/media,templates_c},fonts}
+install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/XML/DocBook/{peardoc2/templates/default/{templates,templates_c},templates/peardoc2/templates}
+install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Smarty-2.5.0/libs/plugins
 
 # Copy files (now I realize how wonderfull is make install...)
 install %{_pearname}-%{version}/phpdoc $RPM_BUILD_ROOT%{_bindir}
 install %{_pearname}-%{version}/*.{php,ini}  $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}
-install %{_pearname}-%{version}/HTML_TreeMenu-1.1.2/TreeMenu.* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/HTML_TreeMenu-1.1.2/
-install %{_pearname}-%{version}/HTML_TreeMenu-1.1.2/images/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/HTML_TreeMenu-1.1.2/images/
-install %{_pearname}-%{version}/docbuilder/*.{php,html} $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/docbuilder/
+install %{_pearname}-%{version}/HTML_TreeMenu-1.1.2/TreeMenu.* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/HTML_TreeMenu-1.1.2
+install %{_pearname}-%{version}/HTML_TreeMenu-1.1.2/images/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/HTML_TreeMenu-1.1.2/images
+install %{_pearname}-%{version}/docbuilder/*.{php,html} $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/docbuilder
 install %{_pearname}-%{version}/docbuilder/images/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/docbuilder/images
 install %{_pearname}-%{version}/docbuilder/includes/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/docbuilder/includes
 install %{_pearname}-%{version}/media/images/earthli/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/media/images/earthli
