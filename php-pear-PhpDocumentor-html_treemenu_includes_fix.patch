@@ -1,30 +1,30 @@
-diff -burN PhpDocumentor-1.2.1.orig/docbuilder/file_dialog.php PhpDocumentor-1.2.1/docbuilder/file_dialog.php
---- PhpDocumentor-1.2.1.orig/docbuilder/file_dialog.php	2003-08-06 15:44:59.690492064 +0200
-+++ PhpDocumentor-1.2.1/docbuilder/file_dialog.php	2003-08-06 15:56:29.557616320 +0200
-@@ -80,7 +80,7 @@
- 	<script src="../HTML_TreeMenu-1.1.2/TreeMenu.js" language="JavaScript" type="text/javascript"></script>
- 
- <?php
--	include_once("$root_dir/HTML_TreeMenu-1.1.2/TreeMenu.php");
-+	include_once("HTML/TreeMenu.php");
- 	set_time_limit(0);    // six minute timeout
- 	ini_set("memory_limit","256M");
- 
-diff -burN PhpDocumentor-1.2.1.orig/docbuilder/includes/utilities.php PhpDocumentor-1.2.1/docbuilder/includes/utilities.php
---- PhpDocumentor-1.2.1.orig/docbuilder/includes/utilities.php	2003-08-06 15:44:59.690492064 +0200
-+++ PhpDocumentor-1.2.1/docbuilder/includes/utilities.php	2003-08-06 15:56:45.792148296 +0200
+diff -burN PhpDocumentor-1.2.2.1-orig/docbuilder/includes/pear-utilities.php PhpDocumentor-1.2.2.1/docbuilder/includes/pear-utilities.php
+--- PhpDocumentor-1.2.2.1-orig/docbuilder/includes/pear-utilities.php	2003-08-31 10:48:50.896230328 +0200
++++ PhpDocumentor-1.2.2.1/docbuilder/includes/pear-utilities.php	2003-08-31 12:04:22.134377424 +0200
 @@ -13,7 +13,7 @@
  // +------------------------------------------------------------------------+
  //
  
--include_once(dirname(realpath(__FILE__))."/../../HTML_TreeMenu-1.1.2/TreeMenu.php");
-+include_once("HTML/TreeMenu.php");
+-include_once('PhpDocumentor/HTML_TreeMenu-1.1.2/TreeMenu.php');
++include_once('HTML/TreeMenu.php');
  
  /**
   *	Allows png's with alpha transparency to be displayed in IE 6
-diff -burN PhpDocumentor-1.2.1.orig/new_phpdoc.php PhpDocumentor-1.2.1/new_phpdoc.php
---- PhpDocumentor-1.2.1.orig/new_phpdoc.php	2003-08-06 15:44:59.692491760 +0200
-+++ PhpDocumentor-1.2.1/new_phpdoc.php	2003-08-06 15:57:18.457182456 +0200
+diff -burN PhpDocumentor-1.2.2.1-orig/docbuilder/pear-file_dialog.php PhpDocumentor-1.2.2.1/docbuilder/pear-file_dialog.php
+--- PhpDocumentor-1.2.2.1-orig/docbuilder/pear-file_dialog.php	2003-08-31 10:48:50.898230024 +0200
++++ PhpDocumentor-1.2.2.1/docbuilder/pear-file_dialog.php	2003-08-31 12:03:53.915667320 +0200
+@@ -28,7 +28,7 @@
+ * common file information
+ */
+ require_once 'PhpDocumentor/phpDocumentor/common.inc.php';
+-require_once 'PhpDocumentor/HTML_TreeMenu-1.1.2/TreeMenu.php';
++require_once 'HTML/TreeMenu.php';
+ require_once( '@WEB-DIR@' . PATH_DELIMITER . 'PhpDocumentor/docbuilder/includes/utilities.php' );
+ 
+ $root_dir = 'PhpDocumentor';
+diff -burN PhpDocumentor-1.2.2.1-orig/new_phpdoc.php PhpDocumentor-1.2.2.1/new_phpdoc.php
+--- PhpDocumentor-1.2.2.1-orig/new_phpdoc.php	2003-08-31 10:48:50.899229872 +0200
++++ PhpDocumentor-1.2.2.1/new_phpdoc.php	2003-08-31 12:04:39.719704048 +0200
 @@ -73,7 +73,7 @@
  ?>
  <script src="HTML_TreeMenu-1.1.2/TreeMenu.js" language="JavaScript" type="text/javascript"></script>

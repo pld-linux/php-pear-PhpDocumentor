@@ -1,6 +1,6 @@
-diff -burN php-pear-PhpDocumentor-1.2.1-orig/PhpDocumentor-1.2.1/new_phpdoc.php php-pear-PhpDocumentor-1.2.1/PhpDocumentor-1.2.1/new_phpdoc.php
---- php-pear-PhpDocumentor-1.2.1-orig/PhpDocumentor-1.2.1/new_phpdoc.php	Tue Jun  3 22:34:57 2003
-+++ php-pear-PhpDocumentor-1.2.1/PhpDocumentor-1.2.1/new_phpdoc.php	Tue Jul  8 23:26:59 2003
+diff -burN PhpDocumentor-1.2.2.1-orig/new_phpdoc.php PhpDocumentor-1.2.2.1/new_phpdoc.php
+--- PhpDocumentor-1.2.2.1-orig/new_phpdoc.php	2003-08-31 10:48:50.899229872 +0200
++++ PhpDocumentor-1.2.2.1/new_phpdoc.php	2003-08-31 11:51:36.698741328 +0200
 @@ -51,7 +51,7 @@
  /**
  * common file information
@@ -10,4 +10,3 @@ diff -burN php-pear-PhpDocumentor-1.2.1-orig/PhpDocumentor-1.2.1/new_phpdoc.php 
  
  // find the .ini directory by parsing phpDocumentor.ini and extracting _phpDocumentor_options[userdir]
  $ini = phpDocumentor_parse_ini_file($_phpDocumentor_install_dir . PATH_DELIMITER . 'phpDocumentor.ini', true);
-

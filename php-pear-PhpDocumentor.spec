@@ -12,12 +12,12 @@
 Summary:	%{_pearname} - provides automatic documenting of PHP API directly from source
 Summary(pl):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto ze ¼róde³
 Name:		php-pear-%{_pearname}
-Version:	1.2.1
+Version:	1.2.2.1
 Release:	0.1
 License:	PHP 2.02
 Group:		Development/Languages/PHP
 Source0:	http://pear.php.net/get/%{_pearname}-%{version}.tgz
-# Source0-md5:	874aa1d7deeff98a272ea204190928fe
+# Source0-md5:	34276bfa0d59d5df11d84ec38896c34a
 Patch0:		%{name}-includes_fix.patch
 Patch1:		%{name}-html_treemenu_includes_fix.patch
 URL:		http://pear.php.net/
@@ -113,14 +113,14 @@ Ta klasa ma w PEAR status: %{_status}.
 
 %prep
 %setup -q -c
-%patch0 -p1
+%patch0 -p0
 %patch1 -p0
 
 %build
 cd %{_pearname}-%{version}
-# We have php binary in /usr/bin, not in /usr/local/bin
-sed 's#/usr/local/bin#/usr/bin#' phpdoc > phpdoc.tmp
-mv -f phpdoc.tmp phpdoc
+# Set up correct paths
+sed 's#@PHP-BIN@#/usr/bin#' pear-phpdoc > pear-phpdoc.tmp
+mv -f pear-phpdoc.tmp pear-phpdoc
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -146,7 +146,7 @@ install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/XML
 install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Smarty-2.5.0/libs/plugins
 
 # Copy files (now I realize how wonderfull is make install...)
-install %{_pearname}-%{version}/phpdoc $RPM_BUILD_ROOT%{_bindir}
+install %{_pearname}-%{version}/pear-phpdoc $RPM_BUILD_ROOT%{_bindir}/phpdoc
 install %{_pearname}-%{version}/*.{php,ini}  $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}
 #install %{_pearname}-%{version}/HTML_TreeMenu-1.1.2/TreeMenu.* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/HTML_TreeMenu-1.1.2
 #install %{_pearname}-%{version}/HTML_TreeMenu-1.1.2/images/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/HTML_TreeMenu-1.1.2/images
@@ -267,7 +267,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc %{_pearname}-%{version}/{Authors,ChangeLog,FAQ,INSTALL,LICENSE,PHPLICENSE.txt,README,Release*,poweredbyphpdoc.gif}
+%doc %{_pearname}-%{version}/{Authors,ChangeLog,FAQ,INSTALL,PHPLICENSE.txt,README,Release*,poweredbyphpdoc.gif}
 %doc %{_pearname}-%{version}/{Documentation,tutorials}
 %attr(755,root,root) %{_bindir}/phpdoc
 %dir %{php_pear_dir}/%{_class}
