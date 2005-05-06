@@ -2,7 +2,9 @@
 # - solve requires issue (something like patch0, but a bit extended?)
 # - simplify creating dirs in %%install
 # - maybe PhpDocumentor.ini should go to /etc/php ?
-
+# - Requires: ... pear(@WEB-DIR@/PhpDocumentor/docbuilder/includes/utilities.php) 
+# - smarty plugins to /usr/share/pear/Smarty ?
+# - remove install noise (use cp -a)?
 %include	/usr/lib/rpm/macros.php
 %define		_class		PhpDocumentor
 %define		_status		stable
@@ -12,7 +14,7 @@ Summary:	%{_pearname} - provides automatic documenting of PHP API directly from 
 Summary(pl):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto ze ¼róde³
 Name:		php-pear-%{_pearname}
 Version:	1.2.2.1
-Release:	0.1
+Release:	0.9
 License:	PHP 2.02
 Group:		Development/Languages/PHP
 Source0:	http://pear.php.net/get/%{_pearname}-%{version}.tgz
@@ -21,9 +23,15 @@ Patch0:		%{name}-includes_fix.patch
 Patch1:		%{name}-html_treemenu_includes_fix.patch
 URL:		http://pear.php.net/package/PhpDocumentor/
 BuildRequires:	rpm-php-pearprov >= 4.0.2-98
+BuildRequires:	sed >= 4.0
 Requires:	php-pear
+Requires:	php-cli
+Requires:	php-pcre
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+# dunno, i need this package NOW
+%define		_noautoreq	'pear(@WEB-DIR@.*)' 'pear(phpDocumentor/.*)'
 
 %description
 The phpDocumentor tool is a standalone auto-documentor similar to
@@ -93,11 +101,10 @@ Mo¿liwo¶ci (krótka lista):
 - generuje ró¿n± dokumentacjê w zale¿no¶ci od znaczników @access
   private, @internal i {@internal}
 - przyk³adowe pliki PHP mog± byæ umieszczane bezpo¶rednio w
-  dokumentacji z pod¶wietlaniem sk³adni i po³±czeniami phpxref za
-  pomoc± znacznika @example
+  dokumentacji z pod¶wietlaniem sk³adni i po³±czeniami phpxref za pomoc±
+  znacznika @example
 - po³±czenia pomiêdzy zewnêtrznym podrêcznikiem i dokumentacj± API
-  jest mo¿liwe na poziomie podsekcji we wszystkich formatach
-  wyj¶ciowych
+  jest mo¿liwe na poziomie podsekcji we wszystkich formatach wyj¶ciowych
 - ³atwo rozszerzalny za pomoc± Convertera dla specyficznych potrzeb
   dokumentacji
 - pe³na dokumentacja ka¿dej z mo¿liwo¶ci, podrêcznik mo¿e byæ
@@ -115,11 +122,16 @@ Ta klasa ma w PEAR status: %{_status}.
 %patch0 -p0
 %patch1 -p0
 
+grep -rl @DATA-DIR@ . | xargs -r sed -i -e 's,@DATA-DIR@,%{php_pear_dir},g'
+
 %build
 cd %{_pearname}-%{version}
-# Set up correct paths
-sed 's#@PHP-BIN@#/usr/bin#' pear-phpdoc > pear-phpdoc.tmp
-mv -f pear-phpdoc.tmp pear-phpdoc
+# Set up correct path
+sed -i -e '
+	s,
+$,, # undos it
+	s#@PHP-BIN@#%{_bindir}/php#
+' pear-phpdoc
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -142,10 +154,16 @@ install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTM
 install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/phphtmllib/{templates/media,templates_c}
 install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/PDF/default/templates/{default/{templates/media,templates_c},fonts}
 install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/XML/DocBook/{peardoc2/templates/default/{templates,templates_c},templates/peardoc2/templates}
+# XXX smarty plugins to /usr/share/pear/Smarty ?
 install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Smarty-2.5.0/libs/plugins
+
+# XXX what is this noise? never seen 'cp -a' ?
 
 # Copy files (now I realize how wonderfull is make install...)
 install %{_pearname}-%{version}/pear-phpdoc $RPM_BUILD_ROOT%{_bindir}/phpdoc
+install %{_pearname}-%{version}/phpDocumentor/pear-Setup.inc.php $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Setup.inc.php
+install %{_pearname}-%{version}/phpDocumentor/pear-IntermediateParser.inc $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/IntermediateParser.inc
+install %{_pearname}-%{version}/phpDocumentor/pear-Converter.inc $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converter.inc
 install %{_pearname}-%{version}/*.{php,ini}  $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}
 #install %{_pearname}-%{version}/HTML_TreeMenu-1.1.2/TreeMenu.* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/HTML_TreeMenu-1.1.2
 #install %{_pearname}-%{version}/HTML_TreeMenu-1.1.2/images/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/HTML_TreeMenu-1.1.2/images
