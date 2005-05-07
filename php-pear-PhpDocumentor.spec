@@ -1,10 +1,8 @@
 # ToDo:
 # - solve requires issue (something like patch0, but a bit extended?)
-# - simplify creating dirs in %%install
 # - maybe PhpDocumentor.ini should go to /etc/php ?
 # - Requires: ... pear(@WEB-DIR@/PhpDocumentor/docbuilder/includes/utilities.php) 
 # - smarty plugins to /usr/share/pear/Smarty ?
-# - remove install noise (use cp -a)?
 %include	/usr/lib/rpm/macros.php
 %define		_class		PhpDocumentor
 %define		_status		stable
@@ -14,7 +12,7 @@ Summary:	%{_pearname} - provides automatic documenting of PHP API directly from 
 Summary(pl):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto ze ¼róde³
 Name:		php-pear-%{_pearname}
 Version:	1.2.2.1
-Release:	0.9
+Release:	0.11
 License:	PHP 2.02
 Group:		Development/Languages/PHP
 Source0:	http://pear.php.net/get/%{_pearname}-%{version}.tgz
@@ -122,162 +120,45 @@ Ta klasa ma w PEAR status: %{_status}.
 %patch0 -p0
 %patch1 -p0
 
+cd %{_pearname}-%{version}
+
+# undos the sources
+find . -type f -print0 | xargs -0 sed -i -e 's,
+$,,'
+
 grep -rl @DATA-DIR@ . | xargs -r sed -i -e 's,@DATA-DIR@,%{php_pear_dir},g'
 
-%build
-cd %{_pearname}-%{version}
 # Set up correct path
-sed -i -e '
-	s,
-$,, # undos it
-	s#@PHP-BIN@#%{_bindir}/php#
-' pear-phpdoc
+sed -i -e 's#@PHP-BIN@#%{_bindir}/php#' pear-phpdoc
+
+# rename
+cd phpDocumentor
+for a in Converter.inc IntermediateParser.inc Setup.inc.php; do
+	mv pear-$a $a
+done
+
+# wasn't bundled before. so remove
+rm -f Smarty-2.5.0/{BUGS,COPYING.lib,ChangeLog,FAQ,INSTALL,NEWS,README,RELEASE_NOTES,TODO}
+
+# and these. correct if it's wrong
+cd Converters/HTML
+rm -f \
+	Smarty/templates/default/templates/layout.css \
+	Smarty/templates/default/templates/style.css \
+	frames/templates/DOM/l0l33t/templates/media/bg_left.png \
+	frames/templates/DOM/l0l33t/templates/media/minus.gif \
+	frames/templates/DOM/l0l33t/templates/media/plus.gif \
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-# Create directory tree (guess it could be simplified... to be done....)
-install -d $RPM_BUILD_ROOT%{_bindir}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/{scripts,user}
-#install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/HTML_TreeMenu-1.1.2/images
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/docbuilder/{images,includes}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/media/images/earthli
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/CHM/default/templates/default/{templates/media,templates_c}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/CSV/dia2code
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/Smarty/templates/{HandS,PHP,default}/{templates/media,templates_c}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/{default,earthli,l0l33t,phpdoc.de,phphtmllib}/{templates/media/{images,lib},templates_c}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/default/{templates/media,templates_c}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/earthli/{templates/media/images,templates_c}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/l0l33t/{templates/media,templates_c}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/phpdoc.de/{templates/media,templates_c}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/phpedit/{templates/media/{images,lib},templates_c}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/phphtmllib/{templates/media,templates_c}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/PDF/default/templates/{default/{templates/media,templates_c},fonts}
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/XML/DocBook/{peardoc2/templates/default/{templates,templates_c},templates/peardoc2/templates}
-# XXX smarty plugins to /usr/share/pear/Smarty ?
-install -d $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Smarty-2.5.0/libs/plugins
+# Create directory tree
+install -d $RPM_BUILD_ROOT{%{_bindir},%{php_pear_dir}/%{_class}}
 
-# XXX what is this noise? never seen 'cp -a' ?
-
-# Copy files (now I realize how wonderfull is make install...)
-install %{_pearname}-%{version}/pear-phpdoc $RPM_BUILD_ROOT%{_bindir}/phpdoc
-install %{_pearname}-%{version}/phpDocumentor/pear-Setup.inc.php $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Setup.inc.php
-install %{_pearname}-%{version}/phpDocumentor/pear-IntermediateParser.inc $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/IntermediateParser.inc
-install %{_pearname}-%{version}/phpDocumentor/pear-Converter.inc $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converter.inc
-install %{_pearname}-%{version}/*.{php,ini}  $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}
-#install %{_pearname}-%{version}/HTML_TreeMenu-1.1.2/TreeMenu.* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/HTML_TreeMenu-1.1.2
-#install %{_pearname}-%{version}/HTML_TreeMenu-1.1.2/images/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/HTML_TreeMenu-1.1.2/images
-install %{_pearname}-%{version}/docbuilder/*.{php,html} $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/docbuilder
-install %{_pearname}-%{version}/docbuilder/images/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/docbuilder/images
-install %{_pearname}-%{version}/docbuilder/includes/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/docbuilder/includes
-install %{_pearname}-%{version}/media/images/earthli/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/media/images/earthli
-install %{_pearname}-%{version}/phpDocumentor/*.{inc,php} $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor
-
-# Gosh... There are soooo many subdirectories in Converters/
-install %{_pearname}-%{version}/phpDocumentor/Converters/CHM/default/*.inc $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/CHM/default
-install %{_pearname}-%{version}/phpDocumentor/Converters/CHM/default/templates/default/*.ini $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/CHM/default/templates/default
-install %{_pearname}-%{version}/phpDocumentor/Converters/CHM/default/templates/default/templates/*.tpl $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/CHM/default/templates/default/templates
-install %{_pearname}-%{version}/phpDocumentor/Converters/CHM/default/templates/default/templates/media/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/CHM/default/templates/default/templates/media
-install %{_pearname}-%{version}/phpDocumentor/Converters/CHM/default/templates/default/templates_c/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/CHM/default/templates/default/templates_c
-install %{_pearname}-%{version}/phpDocumentor/Converters/CSV/dia2code/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/CSV/dia2code
-
-#install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/ $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/Smarty/*.inc $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/Smarty
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/Smarty/templates/HandS/*.ini $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/Smarty/templates/HandS
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/Smarty/templates/HandS/templates/*.tpl $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/Smarty/templates/HandS/templates
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/Smarty/templates/HandS/templates/media/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/Smarty/templates/HandS/templates/media
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/Smarty/templates/HandS/templates_c/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/Smarty/templates/HandS/templates_c
-
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/Smarty/templates/PHP/*.ini $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/Smarty/templates/PHP
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/Smarty/templates/PHP/templates/*.tpl $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/Smarty/templates/PHP/templates
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/Smarty/templates/PHP/templates/media/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/Smarty/templates/PHP/templates/media
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/Smarty/templates/PHP/templates_c/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/Smarty/templates/PHP/templates_c
-
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/Smarty/templates/default/*.ini $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/Smarty/templates/default
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/Smarty/templates/default/templates/*.tpl $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/Smarty/templates/default/templates
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/Smarty/templates/default/templates/media/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/Smarty/templates/default/templates/media
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/Smarty/templates/default/templates_c/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/Smarty/templates/default/templates_c
-
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/*.inc $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames
-
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/default/*.ini $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/default
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/default/templates/*.tpl $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/default/templates
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/default/templates/media/*.css $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/default/templates/media
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/default/templates/media/images/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/default/templates/media/images
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/default/templates/media/lib/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/default/templates/media/lib
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/default/templates_c/*.tpl $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/default/templates_c
-
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/earthli/*.ini $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/earthli
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/earthli/templates/*.tpl $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/earthli/templates
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/earthli/templates/media/*.css $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/earthli/templates/media
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/earthli/templates/media/images/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/earthli/templates/media/images
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/earthli/templates/media/lib/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/earthli/templates/media/lib
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/earthli/templates_c/*.tpl $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/earthli/templates_c
-
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/l0l33t/*.ini $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/l0l33t
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/l0l33t/templates/*.tpl $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/l0l33t/templates
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/l0l33t/templates/media/*.css $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/l0l33t/templates/media
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/l0l33t/templates/media/images/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/l0l33t/templates/media/images
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/l0l33t/templates/media/lib/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/l0l33t/templates/media/lib
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/l0l33t/templates_c/*.tpl $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/l0l33t/templates_c
-
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/phpdoc.de/*.ini $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/phpdoc.de
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/phpdoc.de/templates/*.tpl $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/phpdoc.de/templates
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/phpdoc.de/templates/media/*.css $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/phpdoc.de/templates/media
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/phpdoc.de/templates/media/images/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/phpdoc.de/templates/media/images
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/phpdoc.de/templates/media/lib/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/phpdoc.de/templates/media/lib
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/phpdoc.de/templates_c/*.tpl $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/phpdoc.de/templates_c
-
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/phphtmllib/*.ini $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/phphtmllib
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/phphtmllib/templates/*.tpl $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/phphtmllib/templates
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/phphtmllib/templates/media/*.css $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/phphtmllib/templates/media
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/phphtmllib/templates/media/images/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/phphtmllib/templates/media/images
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/phphtmllib/templates/media/lib/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/phphtmllib/templates/media/lib
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/DOM/phphtmllib/templates_c/*.tpl $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/DOM/phphtmllib/templates_c
-
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/default/*.ini $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/default
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/default/templates/*.tpl $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/default/templates
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/default/templates/media/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/default/templates/media
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/default/templates_c/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/default/templates_c
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/earthli/*.ini $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/earthli
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/earthli/templates/*.tpl $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/earthli/templates
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/earthli/templates/media/*.css $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/earthli/templates/media
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/earthli/templates/media/images/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/earthli/templates/media/images
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/earthli/templates_c/*.tpl $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/earthli/templates_c
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/l0l33t/*.ini $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/l0l33t
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/l0l33t/templates/*.tpl $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/l0l33t/templates
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/l0l33t/templates/media/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/l0l33t/templates/media
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/l0l33t/templates_c/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/l0l33t/templates_c
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/phpdoc.de/*.ini $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/phpdoc.de
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/phpdoc.de/templates/*.tpl $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/phpdoc.de/templates
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/phpdoc.de/templates/media/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/phpdoc.de/templates/media
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/phpdoc.de/templates_c/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/phpdoc.de/templates_c
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/phpedit/*.ini $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/phpedit
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/phpedit/templates/*.tpl $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/phpedit/templates
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/phpedit/templates/media/*.css $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/phpedit/templates/media
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/phpedit/templates/media/images/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/phpedit/templates/media/images
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/phpedit/templates/media/lib/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/phpedit/templates/media/lib
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/phpedit/templates_c/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/phpedit/templates_c
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/phphtmllib/*.ini $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/phphtmllib
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/phphtmllib/templates/*.tpl $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/phphtmllib/templates
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/phphtmllib/templates/media/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/phphtmllib/templates/media
-install %{_pearname}-%{version}/phpDocumentor/Converters/HTML/frames/templates/phphtmllib/templates_c/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/HTML/frames/templates/phphtmllib/templates_c
-install %{_pearname}-%{version}/phpDocumentor/Converters/PDF/default/*.{inc,php} $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/PDF/default
-install %{_pearname}-%{version}/phpDocumentor/Converters/PDF/default/templates/default/*.ini $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/PDF/default/templates/default
-install %{_pearname}-%{version}/phpDocumentor/Converters/PDF/default/templates/default/templates/*.tpl $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/PDF/default/templates/default/templates
-install %{_pearname}-%{version}/phpDocumentor/Converters/PDF/default/templates/default/templates/media/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/PDF/default/templates/default/templates/media
-install %{_pearname}-%{version}/phpDocumentor/Converters/PDF/default/templates/default/templates_c/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/PDF/default/templates/default/templates_c
-install %{_pearname}-%{version}/phpDocumentor/Converters/PDF/default/templates/fonts/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/PDF/default/templates/fonts
-install %{_pearname}-%{version}/phpDocumentor/Converters/XML/DocBook/*.inc $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/XML/DocBook
-install %{_pearname}-%{version}/phpDocumentor/Converters/XML/DocBook/peardoc2/*.inc $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/XML/DocBook/peardoc2
-install %{_pearname}-%{version}/phpDocumentor/Converters/XML/DocBook/peardoc2/templates/default/*.ini $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/XML/DocBook/peardoc2/templates/default
-install %{_pearname}-%{version}/phpDocumentor/Converters/XML/DocBook/peardoc2/templates/default/templates/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/XML/DocBook/peardoc2/templates/default/templates
-install %{_pearname}-%{version}/phpDocumentor/Converters/XML/DocBook/peardoc2/templates/default/templates_c/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/XML/DocBook/peardoc2/templates/default/templates_c
-install %{_pearname}-%{version}/phpDocumentor/Converters/XML/DocBook/templates/peardoc2/templates/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Converters/XML/DocBook/templates/peardoc2/templates
-install %{_pearname}-%{version}/phpDocumentor/Smarty-2.5.0/libs/*.{php,tpl} $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Smarty-2.5.0/libs
-install %{_pearname}-%{version}/phpDocumentor/Smarty-2.5.0/libs/plugins/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/phpDocumentor/Smarty-2.5.0/libs/plugins
-install %{_pearname}-%{version}/scripts/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/scripts/
-install %{_pearname}-%{version}/user/* $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}/user/
+cd %{_pearname}-%{version}
+cp -a docbuilder media phpDocumentor scripts user $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}
+install pear-phpdoc $RPM_BUILD_ROOT%{_bindir}/phpdoc
+install phpdoc.php new_phpdoc.php phpDocumentor.ini $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
