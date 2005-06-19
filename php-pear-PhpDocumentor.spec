@@ -11,12 +11,12 @@
 Summary:	%{_pearname} - provides automatic documenting of PHP API directly from source
 Summary(pl):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto ze ¼róde³
 Name:		php-pear-%{_pearname}
-Version:	1.2.2.1
-Release:	0.11
-License:	PHP 2.02
+Version:	1.2.3
+Release:	0.16
+License:	PHP 3.00
 Group:		Development/Languages/PHP
 Source0:	http://pear.php.net/get/%{_pearname}-%{version}.tgz
-# Source0-md5:	34276bfa0d59d5df11d84ec38896c34a
+# Source0-md5:	200556aaec710a90b4d073fce3547817
 Patch0:		%{name}-includes_fix.patch
 Patch1:		%{name}-html_treemenu_includes_fix.patch
 URL:		http://pear.php.net/package/PhpDocumentor/
@@ -29,7 +29,10 @@ BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # dunno, i need this package NOW
-%define		_noautoreq	'pear(@WEB-DIR@.*)' 'pear(phpDocumentor/.*)'
+%define		_noautoreq	'pear(phpDocumentor/.*)' 'pear(/usr/share/pear/data/PhpDocumentor/docbuilder/includes/utilities.php)' 'pear(HTML_TreeMenu-1.1.2/TreeMenu.php)'
+
+%define		__pear php4 -C -q -d include_path=%{php_pear_dir} -d output_buffering=1 -d memory_limit=16M %{php_pear_dir}/pearcmd.php
+%define		_sysconfdir /etc/pear
 
 %description
 The phpDocumentor tool is a standalone auto-documentor similar to
@@ -117,25 +120,41 @@ Ta klasa ma w PEAR status: %{_status}.
 
 %prep
 %setup -q -c
-%patch0 -p0
-%patch1 -p0
 
+# use pear to install it to ./build
+mv package.xml %{_pearname}-%{version}
 cd %{_pearname}-%{version}
+%{__pear} \
+	-d doc_dir=%{_docdir} \
+	-d data_dir=%{php_pear_dir}/data \
+	install \
+	--installroot=../build \
+	--offline \
+	--nodeps \
+	package.xml \
+
+#exit 0
+#cd %{_pearname}-%{version}
 
 # undos the sources
 find . -type f -print0 | xargs -0 sed -i -e 's,
 $,,'
 
-grep -rl @DATA-DIR@ . | xargs -r sed -i -e 's,@DATA-DIR@,%{php_pear_dir},g'
+# remove installroot (why it's there?)
+grep -rl '\.\./build' ../build | xargs -r sed -i -e 's,\.\./build,,g'
 
-# Set up correct path
-sed -i -e 's#@PHP-BIN@#%{_bindir}/php#' pear-phpdoc
+# patch the sources
+# include only these to this package and depend on smarty?
+#Only in Smarty-2.5.0/libs/plugins: block.strip.php
+#Only in Smarty-2.5.0/libs/plugins: function.assign.php
+#Only in Smarty-2.5.0/libs/plugins: function.var_dump.php
+#Only in Smarty-2.5.0/libs/plugins: modifier.htmlentities.php
+#Only in Smarty-2.5.0/libs/plugins: modifier.rawurlencode.php
 
-# rename
-cd phpDocumentor
-for a in Converter.inc IntermediateParser.inc Setup.inc.php; do
-	mv pear-$a $a
-done
+#%patch0 -p1
+#%patch1 -p1
+
+exit 0
 
 # wasn't bundled before. so remove
 rm -f Smarty-2.5.0/{BUGS,COPYING.lib,ChangeLog,FAQ,INSTALL,NEWS,README,RELEASE_NOTES,TODO}
@@ -152,21 +171,42 @@ rm -f \
 %install
 rm -rf $RPM_BUILD_ROOT
 
-# Create directory tree
-install -d $RPM_BUILD_ROOT{%{_bindir},%{php_pear_dir}/%{_class}}
+install -d $RPM_BUILD_ROOT{%{_sysconfdir},%{_bindir},%{php_pear_dir}}
+cp -a build/%{_bindir}/phpdoc $RPM_BUILD_ROOT%{_bindir}
+cp -a build/%{php_pear_dir}/* $RPM_BUILD_ROOT%{php_pear_dir}
 
 cd %{_pearname}-%{version}
-cp -a docbuilder media phpDocumentor scripts user $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}
-install pear-phpdoc $RPM_BUILD_ROOT%{_bindir}/phpdoc
-install phpdoc.php new_phpdoc.php phpDocumentor.ini $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}
+#%{__pear} \
+#	-d doc_dir=%{_docdir}/%{name}-%{version} \
+#	install \
+#	--installroot=$RPM_BUILD_ROOT \
+#	--offline \
+#	--nodeps \
+#	--ignore-errors \
+#	package.xml
+install package.xml $RPM_BUILD_ROOT%{_sysconfdir}/%{_pearname}.xml
+
+# useless
+rm -rf $RPM_BUILD_ROOT%{php_pear_dir}/tests/PhpDocumentor/Documentation/tests
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%post
+%{__pear} -q upgrade --register-only --force --offline %{_sysconfdir}/%{_pearname}.xml
+
+%preun
+if [ "$1" = 0 ]; then
+	%{__pear} -q uninstall --register-only --offline %{_pearname}
+fi
 
 %files
 %defattr(644,root,root,755)
 %doc %{_pearname}-%{version}/{Authors,ChangeLog,FAQ,INSTALL,PHPLICENSE.txt,README,Release*,poweredbyphpdoc.gif}
 %doc %{_pearname}-%{version}/{Documentation,tutorials}
+%doc build/usr/bin/scripts
+%{_sysconfdir}/*.xml
 %attr(755,root,root) %{_bindir}/phpdoc
 %dir %{php_pear_dir}/%{_class}
 %{php_pear_dir}/%{_class}/*
+%{php_pear_dir}/data/%{_class}/*
