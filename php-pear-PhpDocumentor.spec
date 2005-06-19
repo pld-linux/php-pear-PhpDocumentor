@@ -12,7 +12,7 @@ Summary:	%{_pearname} - provides automatic documenting of PHP API directly from 
 Summary(pl):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto ze ¼róde³
 Name:		php-pear-%{_pearname}
 Version:	1.2.3
-Release:	0.16
+Release:	0.21
 License:	PHP 3.00
 Group:		Development/Languages/PHP
 Source0:	http://pear.php.net/get/%{_pearname}-%{version}.tgz
@@ -25,7 +25,7 @@ BuildRequires:	rpm-php-pearprov >= 4.0.2-98
 BuildRequires:	sed >= 4.0
 Requires(post):		php-pear-PEAR
 Requires(preun):	php-pear-PEAR
-Requires:	php-pear
+Requires:	php-pear >= 4:1.0-2.8
 Requires:	php-cli
 Requires:	php-pcre
 BuildArch:	noarch
@@ -33,9 +33,6 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # dunno, i need this package NOW
 %define		_noautoreq	'pear(phpDocumentor/.*)' 'pear(/usr/share/pear/data/PhpDocumentor/docbuilder/includes/utilities.php)' 'pear(HTML_TreeMenu-1.1.2/TreeMenu.php)'
-
-%define		__pear %{_bindir}/pear
-%define		_sysconfdir /etc/pear
 
 %description
 The phpDocumentor tool is a standalone auto-documentor similar to
@@ -124,10 +121,10 @@ Ta klasa ma w PEAR status: %{_status}.
 %prep
 %setup -q -c
 
-# use pear to install it to ./build
+# use pear to install it to ../build
 mv package.xml %{_pearname}-%{version}
 cd %{_pearname}-%{version}
-%{__pear} \
+pear \
 	-d doc_dir=%{_docdir} \
 	-d data_dir=%{php_pear_dir}/data \
 	install \
@@ -136,15 +133,22 @@ cd %{_pearname}-%{version}
 	--nodeps \
 	package.xml \
 
-#exit 0
-#cd %{_pearname}-%{version}
+cd ../build
 
 # undos the sources
 find . -type f -print0 | xargs -0 sed -i -e 's,
 $,,'
 
+# patches
+#%patch0 -p1
+#%patch1 -p1
+
 # remove installroot (why it's there?)
 grep -rl '\.\./build' ../build | xargs -r sed -i -e 's,\.\./build,,g'
+
+# useless
+cd .%{php_pear_dir}
+rm -rf tests/PhpDocumentor/Documentation/tests
 
 # patch the sources
 # include only these to this package and depend on smarty?
@@ -154,16 +158,11 @@ grep -rl '\.\./build' ../build | xargs -r sed -i -e 's,\.\./build,,g'
 #Only in Smarty-2.5.0/libs/plugins: modifier.htmlentities.php
 #Only in Smarty-2.5.0/libs/plugins: modifier.rawurlencode.php
 
-#%patch0 -p1
-#%patch1 -p1
-
-exit 0
-
 # wasn't bundled before. so remove
-rm -f Smarty-2.5.0/{BUGS,COPYING.lib,ChangeLog,FAQ,INSTALL,NEWS,README,RELEASE_NOTES,TODO}
+rm -f PhpDocumentor/phpDocumentor/Smarty-2.5.0/{BUGS,COPYING.lib,ChangeLog,FAQ,INSTALL,NEWS,README,RELEASE_NOTES,TODO}
 
 # and these. correct if it's wrong
-cd Converters/HTML
+cd data/PhpDocumentor/phpDocumentor/Converters/HTML
 rm -f \
 	Smarty/templates/default/templates/layout.css \
 	Smarty/templates/default/templates/style.css \
@@ -174,42 +173,29 @@ rm -f \
 %install
 rm -rf $RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT{%{_sysconfdir},%{_bindir},%{php_pear_dir}}
+install -d $RPM_BUILD_ROOT{%{_bindir},%{php_pear_dir}}
 cp -a build/%{_bindir}/phpdoc $RPM_BUILD_ROOT%{_bindir}
 cp -a build/%{php_pear_dir}/* $RPM_BUILD_ROOT%{php_pear_dir}
 
 cd %{_pearname}-%{version}
-#%{__pear} \
-#	-d doc_dir=%{_docdir}/%{name}-%{version} \
-#	install \
-#	--installroot=$RPM_BUILD_ROOT \
-#	--offline \
-#	--nodeps \
-#	--ignore-errors \
-#	package.xml
-install package.xml $RPM_BUILD_ROOT%{_sysconfdir}/%{_pearname}.xml
+pear -q install \
+	--register-only --force --offline \
+	--installroot=$RPM_BUILD_ROOT package.xml
 
-# useless
-rm -rf $RPM_BUILD_ROOT%{php_pear_dir}/tests/PhpDocumentor/Documentation/tests
+# pear registry files
+rm -rf $RPM_BUILD_ROOT%{php_pear_dir}/.{channels,dep*,filemap,lock}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-
-%post
-%{__pear} -q upgrade --register-only --force --offline %{_sysconfdir}/%{_pearname}.xml
-
-%preun
-if [ "$1" = 0 ]; then
-	%{__pear} -q uninstall --register-only --offline %{_pearname}
-fi
 
 %files
 %defattr(644,root,root,755)
 %doc %{_pearname}-%{version}/{Authors,ChangeLog,FAQ,INSTALL,PHPLICENSE.txt,README,Release*,poweredbyphpdoc.gif}
 %doc %{_pearname}-%{version}/{Documentation,tutorials}
 %doc build/usr/bin/scripts
-%{_sysconfdir}/*.xml
 %attr(755,root,root) %{_bindir}/phpdoc
 %dir %{php_pear_dir}/%{_class}
 %{php_pear_dir}/%{_class}/*
 %{php_pear_dir}/data/%{_class}/*
+
+%{php_pear_dir}/.registry/*.reg
