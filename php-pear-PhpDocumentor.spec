@@ -20,8 +20,11 @@ Source0:	http://pear.php.net/get/%{_pearname}-%{version}.tgz
 Patch0:		%{name}-includes_fix.patch
 Patch1:		%{name}-html_treemenu_includes_fix.patch
 URL:		http://pear.php.net/package/PhpDocumentor/
+BuildRequires:	php-pear-PEAR >= 1.4.0-0.a11.5
 BuildRequires:	rpm-php-pearprov >= 4.0.2-98
 BuildRequires:	sed >= 4.0
+Requires(post):		php-pear-PEAR
+Requires(preun):	php-pear-PEAR
 Requires:	php-pear
 Requires:	php-cli
 Requires:	php-pcre
@@ -31,7 +34,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 # dunno, i need this package NOW
 %define		_noautoreq	'pear(phpDocumentor/.*)' 'pear(/usr/share/pear/data/PhpDocumentor/docbuilder/includes/utilities.php)' 'pear(HTML_TreeMenu-1.1.2/TreeMenu.php)'
 
-%define		__pear php4 -C -q -d include_path=%{php_pear_dir} -d output_buffering=1 -d memory_limit=16M %{php_pear_dir}/pearcmd.php
+%define		__pear %{_bindir}/pear
 %define		_sysconfdir /etc/pear
 
 %description
