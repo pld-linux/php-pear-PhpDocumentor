@@ -5,18 +5,19 @@
 # - smarty plugins to /usr/share/pear/Smarty ?
 %include	/usr/lib/rpm/macros.php
 %define		_class		PhpDocumentor
-%define		_status		stable
+%define		_status		beta
 %define		_pearname	%{_class}
 
 Summary:	%{_pearname} - provides automatic documenting of PHP API directly from source
 Summary(pl):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto ze ¼róde³
 Name:		php-pear-%{_pearname}
-Version:	1.2.3
-Release:	0.21
+Version:	1.3.0
+%define	_rc RC3
+Release:	0.%{_rc}.2
 License:	PHP 3.00
 Group:		Development/Languages/PHP
-Source0:	http://pear.php.net/get/%{_pearname}-%{version}.tgz
-# Source0-md5:	200556aaec710a90b4d073fce3547817
+Source0:	http://pear.php.net/get/%{_pearname}-%{version}%{_rc}.tgz
+# Source0-md5:	d96ccefa7cfce8b0f24216b8f5041ba4
 Patch0:		%{name}-includes_fix.patch
 Patch1:		%{name}-html_treemenu_includes_fix.patch
 URL:		http://pear.php.net/package/PhpDocumentor/
@@ -32,7 +33,7 @@ BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # dunno, i need this package NOW
-%define		_noautoreq	'pear(phpDocumentor/.*)' 'pear(/usr/share/pear/data/PhpDocumentor/docbuilder/includes/utilities.php)' 'pear(HTML_TreeMenu-1.1.2/TreeMenu.php)'
+#%define		_noautoreq	'pear(phpDocumentor/.*)' 'pear(/usr/share/pear/data/PhpDocumentor/docbuilder/includes/utilities.php)' 'pear(HTML_TreeMenu-1.1.2/TreeMenu.php)'
 
 %description
 The phpDocumentor tool is a standalone auto-documentor similar to
@@ -122,8 +123,8 @@ Ta klasa ma w PEAR status: %{_status}.
 %setup -q -c
 
 # use pear to install it to ../build
-mv package.xml %{_pearname}-%{version}
-cd %{_pearname}-%{version}
+mv package.xml %{_pearname}-%{version}%{_rc}
+cd %{_pearname}-%{version}%{_rc}
 pear \
 	-d doc_dir=%{_docdir} \
 	-d data_dir=%{php_pear_dir}/data \
@@ -138,6 +139,9 @@ cd ../build
 # undos the sources
 find . -type f -print0 | xargs -0 sed -i -e 's,
 $,,'
+
+# jesus, remove the Smarty cache, poldek goes crazy on them
+find -name templates_c | xargs -ri sh -c 'rm -rf {}; mkdir {}'
 
 # patches
 #%patch0 -p1
@@ -177,7 +181,7 @@ install -d $RPM_BUILD_ROOT{%{_bindir},%{php_pear_dir}}
 cp -a build/%{_bindir}/phpdoc $RPM_BUILD_ROOT%{_bindir}
 cp -a build/%{php_pear_dir}/* $RPM_BUILD_ROOT%{php_pear_dir}
 
-cd %{_pearname}-%{version}
+cd %{_pearname}-%{version}%{_rc}
 pear -q install \
 	--register-only --force --offline \
 	--installroot=$RPM_BUILD_ROOT package.xml
@@ -190,8 +194,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc %{_pearname}-%{version}/{Authors,ChangeLog,FAQ,INSTALL,PHPLICENSE.txt,README,Release*,poweredbyphpdoc.gif}
-%doc %{_pearname}-%{version}/{Documentation,tutorials}
+%doc %{_pearname}-%{version}%{_rc}/{Authors,ChangeLog,FAQ,INSTALL,PHPLICENSE.txt,README,Release*,poweredbyphpdoc.gif}
+%doc %{_pearname}-%{version}%{_rc}/{Documentation,tutorials}
 %doc build/usr/bin/scripts
 %attr(755,root,root) %{_bindir}/phpdoc
 %dir %{php_pear_dir}/%{_class}
