@@ -13,7 +13,7 @@ Summary(pl):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto z
 Name:		php-pear-%{_pearname}
 Version:	1.3.0
 %define	_rc RC3
-Release:	0.%{_rc}.4
+Release:	0.%{_rc}.5
 License:	PHP 3.00
 Group:		Development/Languages/PHP
 Source0:	http://pear.php.net/get/%{_pearname}-%{version}%{_rc}.tgz
@@ -191,6 +191,13 @@ rm -rf $RPM_BUILD_ROOT%{php_pear_dir}/.{channels,dep*,filemap,lock}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%post
+if [ -x /usr/bin/pear ]; then
+	umask 002
+	# this builds the pear registry depdb
+	/usr/bin/pear list > /dev/null
+fi
 
 %files
 %defattr(644,root,root,755)
