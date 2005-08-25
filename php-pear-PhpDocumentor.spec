@@ -21,7 +21,7 @@ Source0:	http://pear.php.net/get/%{_pearname}-%{version}%{_rc}.tgz
 Patch0:		%{name}-includes_fix.patch
 Patch1:		%{name}-html_treemenu_includes_fix.patch
 URL:		http://pear.php.net/package/PhpDocumentor/
-BuildRequires:	php-pear-PEAR >= 1.4.0-0.a11.5
+BuildRequires:	php-pear-PEAR >= 1:1.4.0-0.a11.5
 BuildRequires:	rpm-php-pearprov >= 4.0.2-98
 BuildRequires:	sed >= 4.0
 Requires(post):		php-pear-PEAR
