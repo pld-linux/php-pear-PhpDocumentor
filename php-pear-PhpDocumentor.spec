@@ -1,7 +1,6 @@
-# ToDo:
+# TODO:
 # - solve requires issue (something like patch0, but a bit extended?)
 # - maybe PhpDocumentor.ini should go to /etc/php ?
-# - Requires: ... pear(@WEB-DIR@/PhpDocumentor/docbuilder/includes/utilities.php) 
 # - smarty plugins to /usr/share/pear/Smarty ?
 %include	/usr/lib/rpm/macros.php
 %define		_class		PhpDocumentor
@@ -13,7 +12,7 @@ Summary(pl):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto z
 Name:		php-pear-%{_pearname}
 Version:	1.3.0
 %define	_rc RC3
-Release:	0.%{_rc}.5
+Release:	0.%{_rc}.6
 License:	PHP 3.00
 Group:		Development/Languages/PHP
 Source0:	http://pear.php.net/get/%{_pearname}-%{version}%{_rc}.tgz
@@ -34,7 +33,8 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # don't require %{php_pear_dir}/data files we provide.
 # TODO treemenu needs patching (removing from this package)
-%define		_noautoreq	'pear(phpDocumentor/.*)' 'pear(%{php_pear_dir}/data)' 'pear(HTML_TreeMenu-1.1.2/TreeMenu.php)'
+# pear/PhpDocumentor can optionally use package "pear/XML_Beautifier" (version >= 1.1)
+%define		_noautoreq	'pear(phpDocumentor/.*)' 'pear(%{php_pear_dir}/data/.*)' 'pear(XML/Beautifier/.*)' 'pear(HTML_TreeMenu-1.1.2/TreeMenu.php)'
 
 %description
 The phpDocumentor tool is a standalone auto-documentor similar to
@@ -131,7 +131,7 @@ find -name templates_c | xargs -ri sh -c 'rm -rf {}; mkdir {}'
 #%patch1 -p1
 
 # useless
-cd .%{php_pear_dir}
+cd ./%{php_pear_dir}
 rm -rf tests/PhpDocumentor/Documentation/tests
 
 # patch the sources
@@ -164,11 +164,15 @@ cp -a ./%{php_pear_dir}/* $RPM_BUILD_ROOT%{php_pear_dir}
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%post
+echo 'pear/PhpDocumentor can optionally use package "pear/XML_Beautifier" (version >= 1.1)'
+
 %files
 %defattr(644,root,root,755)
 %doc ./%{_docdir}/%{_pearname}/{Authors,ChangeLog,FAQ,INSTALL,PHPLICENSE.txt,README,Release*}
 %doc ./%{_docdir}/%{_pearname}/{Documentation,tutorials}
 %doc ./%{_bindir}/scripts
+# registry missing.
 #%{php_pear_dir}/.registry/*.reg
 %attr(755,root,root) %{_bindir}/phpdoc
 
