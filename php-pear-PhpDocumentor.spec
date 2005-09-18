@@ -22,6 +22,7 @@ Patch1:		%{name}-html_treemenu_includes_fix.patch
 Patch2:		%{name}-smarty.patch
 URL:		http://pear.php.net/package/PhpDocumentor/
 BuildRequires:	php-pear-PEAR >= 1:1.4.0-0.b1.3
+BuildRequires:	php-zlib
 BuildRequires:	rpm-php-pearprov >= 4.0.2-98
 BuildRequires:	sed >= 4.0
 Requires(post):		php-pear-PEAR
