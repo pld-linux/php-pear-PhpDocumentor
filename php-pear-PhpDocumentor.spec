@@ -12,13 +12,14 @@ Summary(pl):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto z
 Name:		php-pear-%{_pearname}
 Version:	1.3.0
 %define	_rc RC3
-Release:	0.%{_rc}.6
+Release:	0.%{_rc}.13
 License:	PHP 3.00
 Group:		Development/Languages/PHP
 Source0:	http://pear.php.net/get/%{_pearname}-%{version}%{_rc}.tgz
 # Source0-md5:	d96ccefa7cfce8b0f24216b8f5041ba4
 Patch0:		%{name}-includes_fix.patch
 Patch1:		%{name}-html_treemenu_includes_fix.patch
+Patch2:		%{name}-smarty.patch
 URL:		http://pear.php.net/package/PhpDocumentor/
 BuildRequires:	php-pear-PEAR >= 1:1.4.0-0.b1.3
 BuildRequires:	rpm-php-pearprov >= 4.0.2-98
@@ -30,6 +31,8 @@ Requires:	php-cli
 Requires:	php-pcre
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+%define		_smartyplugindir	%{php_pear_dir}/Smarty/plugins
 
 # don't require %{php_pear_dir}/data files we provide.
 # TODO treemenu needs patching (removing from this package)
@@ -123,27 +126,24 @@ Ta klasa ma w PEAR status: %{_status}.
 %prep
 %pear_package_setup
 
-# jesus, remove the Smarty cache, poldek goes crazy on them (provides/requires payload exceeded 64k)
+# remove bundled Smarty cache, poldek goes crazy on them (provides/requires payload exceeded 64k)
 find -name templates_c | xargs -ri sh -c 'rm -rf {}; mkdir {}'
 
 # patches
 #%patch0 -p1
 #%patch1 -p1
+%patch2 -p1
+
+# remove bundled Smarty. use system one.
+mkdir plugins
+mv ./%{php_pear_dir}/PhpDocumentor/phpDocumentor/Smarty-*/libs/plugins/\
+{block.strip.php,function.{assign,var_dump}.php,modifier.{htmlentities,rawurlencode}.php} plugins
+rm -rf ./%{php_pear_dir}/PhpDocumentor/phpDocumentor/Smarty-*
+rm -rf ./%{php_pear_dir}/data/PhpDocumentor/phpDocumentor/Smarty-*
 
 # useless
 cd ./%{php_pear_dir}
 rm -rf tests/PhpDocumentor/Documentation/tests
-
-# patch the sources
-# include only these to this package and depend on smarty?
-#Only in Smarty-2.5.0/libs/plugins: block.strip.php
-#Only in Smarty-2.5.0/libs/plugins: function.assign.php
-#Only in Smarty-2.5.0/libs/plugins: function.var_dump.php
-#Only in Smarty-2.5.0/libs/plugins: modifier.htmlentities.php
-#Only in Smarty-2.5.0/libs/plugins: modifier.rawurlencode.php
-
-# wasn't bundled before. so remove
-rm -f PhpDocumentor/phpDocumentor/Smarty-2.5.0/{BUGS,COPYING.lib,ChangeLog,FAQ,INSTALL,NEWS,README,RELEASE_NOTES,TODO}
 
 # and these. correct if it's wrong
 cd data/PhpDocumentor/phpDocumentor/Converters/HTML
@@ -157,9 +157,10 @@ rm -f \
 %install
 rm -rf $RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT{%{_bindir},%{php_pear_dir}}
+install -d $RPM_BUILD_ROOT{%{_bindir},%{php_pear_dir},%{_smartyplugindir}}
 cp -a ./%{_bindir}/phpdoc $RPM_BUILD_ROOT%{_bindir}
 cp -a ./%{php_pear_dir}/* $RPM_BUILD_ROOT%{php_pear_dir}
+cp -a plugins/* $RPM_BUILD_ROOT%{_smartyplugindir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -178,3 +179,6 @@ echo 'pear/PhpDocumentor can optionally use package "pear/XML_Beautifier" (versi
 
 %{php_pear_dir}/%{_class}
 %{php_pear_dir}/data/%{_class}
+
+# extra Smarty plugins
+%{_smartyplugindir}/*
