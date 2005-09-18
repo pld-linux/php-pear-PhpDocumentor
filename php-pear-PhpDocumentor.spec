@@ -21,7 +21,7 @@ Source0:	http://pear.php.net/get/%{_pearname}-%{version}%{_rc}.tgz
 Patch0:		%{name}-includes_fix.patch
 Patch1:		%{name}-html_treemenu_includes_fix.patch
 URL:		http://pear.php.net/package/PhpDocumentor/
-BuildRequires:	php-pear-PEAR >= 1:1.4.0-0.a11.5
+BuildRequires:	php-pear-PEAR >= 1:1.4.0-0.b1.3
 BuildRequires:	rpm-php-pearprov >= 4.0.2-98
 BuildRequires:	sed >= 4.0
 Requires(post):		php-pear-PEAR
@@ -32,8 +32,9 @@ Requires:	php-pcre
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-# dunno, i need this package NOW
-#%define		_noautoreq	'pear(phpDocumentor/.*)' 'pear(/usr/share/pear/data/PhpDocumentor/docbuilder/includes/utilities.php)' 'pear(HTML_TreeMenu-1.1.2/TreeMenu.php)'
+# don't require %{php_pear_dir}/data files we provide.
+# TODO treemenu needs patching (removing from this package)
+%define		_noautoreq	'pear(phpDocumentor/.*)' 'pear(%{php_pear_dir}/data)' 'pear(HTML_TreeMenu-1.1.2/TreeMenu.php)'
 
 %description
 The phpDocumentor tool is a standalone auto-documentor similar to
@@ -120,35 +121,14 @@ Mo¿liwo¶ci (krótka lista):
 Ta klasa ma w PEAR status: %{_status}.
 
 %prep
-%setup -q -c
+%pear_package_setup
 
-# use pear to install it to ../build
-mv package.xml %{_pearname}-%{version}%{_rc}
-cd %{_pearname}-%{version}%{_rc}
-pear \
-	-d doc_dir=%{_docdir} \
-	-d data_dir=%{php_pear_dir}/data \
-	install \
-	--installroot=../build \
-	--offline \
-	--nodeps \
-	package.xml \
-
-cd ../build
-
-# undos the sources
-find . -type f -print0 | xargs -0 sed -i -e 's,
-$,,'
-
-# jesus, remove the Smarty cache, poldek goes crazy on them
+# jesus, remove the Smarty cache, poldek goes crazy on them (provides/requires payload exceeded 64k)
 find -name templates_c | xargs -ri sh -c 'rm -rf {}; mkdir {}'
 
 # patches
 #%patch0 -p1
 #%patch1 -p1
-
-# remove installroot (why it's there?)
-grep -rl '\.\./build' ../build | xargs -r sed -i -e 's,\.\./build,,g'
 
 # useless
 cd .%{php_pear_dir}
@@ -178,35 +158,19 @@ rm -f \
 rm -rf $RPM_BUILD_ROOT
 
 install -d $RPM_BUILD_ROOT{%{_bindir},%{php_pear_dir}}
-cp -a build/%{_bindir}/phpdoc $RPM_BUILD_ROOT%{_bindir}
-cp -a build/%{php_pear_dir}/* $RPM_BUILD_ROOT%{php_pear_dir}
-
-cd %{_pearname}-%{version}%{_rc}
-pear -q install \
-	--register-only --force --offline \
-	--installroot=$RPM_BUILD_ROOT package.xml
-
-# pear registry files
-rm -rf $RPM_BUILD_ROOT%{php_pear_dir}/.{channels,dep*,filemap,lock}
+cp -a ./%{_bindir}/phpdoc $RPM_BUILD_ROOT%{_bindir}
+cp -a ./%{php_pear_dir}/* $RPM_BUILD_ROOT%{php_pear_dir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post
-if [ -x /usr/bin/pear ]; then
-	umask 002
-	# this builds the pear registry depdb
-	/usr/bin/pear list > /dev/null
-fi
-
 %files
 %defattr(644,root,root,755)
-%doc %{_pearname}-%{version}%{_rc}/{Authors,ChangeLog,FAQ,INSTALL,PHPLICENSE.txt,README,Release*,poweredbyphpdoc.gif}
-%doc %{_pearname}-%{version}%{_rc}/{Documentation,tutorials}
-%doc build/usr/bin/scripts
+%doc ./%{_docdir}/%{_pearname}/{Authors,ChangeLog,FAQ,INSTALL,PHPLICENSE.txt,README,Release*}
+%doc ./%{_docdir}/%{_pearname}/{Documentation,tutorials}
+%doc ./%{_bindir}/scripts
+#%{php_pear_dir}/.registry/*.reg
 %attr(755,root,root) %{_bindir}/phpdoc
 
 %{php_pear_dir}/%{_class}
 %{php_pear_dir}/data/%{_class}
-
-%{php_pear_dir}/.registry/*.reg
