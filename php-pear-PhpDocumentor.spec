@@ -1,8 +1,8 @@
 # TODO:
 # - solve requires issue (something like patch0, but a bit extended?)
 # - maybe PhpDocumentor.ini should go to /etc/php ?
-# - smarty plugins to /usr/share/pear/Smarty ?
 %include	/usr/lib/rpm/macros.php
+%include	/usr/lib/rpm/macros.pear
 %define		_class		PhpDocumentor
 %define		_status		beta
 %define		_pearname	%{_class}
@@ -12,7 +12,7 @@ Summary(pl):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto z
 Name:		php-pear-%{_pearname}
 Version:	1.3.0
 %define	_rc RC3
-Release:	0.%{_rc}.13
+Release:	0.%{_rc}.14
 License:	PHP 3.00
 Group:		Development/Languages/PHP
 Source0:	http://pear.php.net/get/%{_pearname}-%{version}%{_rc}.tgz
@@ -21,12 +21,7 @@ Patch0:		%{name}-includes_fix.patch
 Patch1:		%{name}-html_treemenu_includes_fix.patch
 Patch2:		%{name}-smarty.patch
 URL:		http://pear.php.net/package/PhpDocumentor/
-BuildRequires:	php-pear-PEAR >= 1:1.4.0-0.b1.3
-BuildRequires:	php-zlib
-BuildRequires:	rpm-php-pearprov >= 4.0.2-98
-BuildRequires:	sed >= 4.0
-Requires(post):		php-pear-PEAR
-Requires(preun):	php-pear-PEAR
+BuildRequires:	php-pear-build
 Requires:	php-pear >= 4:1.0-2.8
 Requires:	php-cli
 Requires:	php-pcre
@@ -171,9 +166,8 @@ echo 'pear/PhpDocumentor can optionally use package "pear/XML_Beautifier" (versi
 
 %files
 %defattr(644,root,root,755)
-%doc ./%{_docdir}/%{_pearname}/{Authors,ChangeLog,FAQ,INSTALL,PHPLICENSE.txt,README,Release*}
-%doc ./%{_docdir}/%{_pearname}/{Documentation,tutorials}
-%doc ./%{_bindir}/scripts
+%doc docs/%{_pearname}/{Authors,ChangeLog,FAQ,INSTALL,PHPLICENSE.txt,README,Release*}
+%doc docs/%{_pearname}/{Documentation,tutorials}
 # registry missing.
 #%{php_pear_dir}/.registry/*.reg
 %attr(755,root,root) %{_bindir}/phpdoc
