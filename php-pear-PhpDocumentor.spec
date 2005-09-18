@@ -12,7 +12,7 @@ Summary(pl):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto z
 Name:		php-pear-%{_pearname}
 Version:	1.3.0
 %define	_rc RC3
-Release:	0.%{_rc}.14
+Release:	0.%{_rc}.20
 License:	PHP 3.00
 Group:		Development/Languages/PHP
 Source0:	http://pear.php.net/get/%{_pearname}-%{version}%{_rc}.tgz
@@ -155,21 +155,23 @@ rm -rf $RPM_BUILD_ROOT
 
 install -d $RPM_BUILD_ROOT{%{_bindir},%{php_pear_dir},%{_smartyplugindir}}
 cp -a ./%{_bindir}/phpdoc $RPM_BUILD_ROOT%{_bindir}
-cp -a ./%{php_pear_dir}/* $RPM_BUILD_ROOT%{php_pear_dir}
+%pear_package_install
 cp -a plugins/* $RPM_BUILD_ROOT%{_smartyplugindir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %post
-echo 'pear/PhpDocumentor can optionally use package "pear/XML_Beautifier" (version >= 1.1)'
+if [ -f %{_docdir}/%{name}-%{version}/optional-packages.txt ]; then
+	cat %{_docdir}/%{name}-%{version}/optional-packages.txt
+fi
 
 %files
 %defattr(644,root,root,755)
+%doc install.log optional-packages.txt
 %doc docs/%{_pearname}/{Authors,ChangeLog,FAQ,INSTALL,PHPLICENSE.txt,README,Release*}
 %doc docs/%{_pearname}/{Documentation,tutorials}
-# registry missing.
-#%{php_pear_dir}/.registry/*.reg
+%{php_pear_dir}/.registry/*.reg
 %attr(755,root,root) %{_bindir}/phpdoc
 
 %{php_pear_dir}/%{_class}
