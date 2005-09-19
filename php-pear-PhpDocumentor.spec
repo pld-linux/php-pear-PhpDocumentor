@@ -2,7 +2,6 @@
 # - solve requires issue (something like patch0, but a bit extended?)
 # - maybe PhpDocumentor.ini should go to /etc/php ?
 %include	/usr/lib/rpm/macros.php
-%include	/usr/lib/rpm/macros.pear
 %define		_class		PhpDocumentor
 %define		_status		beta
 %define		_pearname	%{_class}
@@ -21,7 +20,7 @@ Patch0:		%{name}-includes_fix.patch
 Patch1:		%{name}-html_treemenu_includes_fix.patch
 Patch2:		%{name}-smarty.patch
 URL:		http://pear.php.net/package/PhpDocumentor/
-BuildRequires:	php-pear-build
+BuildRequires:	rpm-php-pearprov >= 4.4.2-10.2
 Requires:	php-pear >= 4:1.0-2.8
 Requires:	php-cli
 Requires:	php-pcre
