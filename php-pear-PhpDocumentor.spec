@@ -1,35 +1,39 @@
-# ToDo:
+# TODO:
 # - solve requires issue (something like patch0, but a bit extended?)
 # - maybe PhpDocumentor.ini should go to /etc/php ?
-# - Requires: ... pear(@WEB-DIR@/PhpDocumentor/docbuilder/includes/utilities.php) 
-# - smarty plugins to /usr/share/pear/Smarty ?
+# - subpackage for -tutorial?
 %include	/usr/lib/rpm/macros.php
 %define		_class		PhpDocumentor
-%define		_status		stable
+%define		_status		beta
 %define		_pearname	%{_class}
 
 Summary:	%{_pearname} - provides automatic documenting of PHP API directly from source
 Summary(pl):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto ze ¼róde³
 Name:		php-pear-%{_pearname}
-Version:	1.2.2.1
-Release:	0.11
-License:	PHP 2.02
+Version:	1.3.0
+%define	_rc RC3
+Release:	0.%{_rc}.20
+License:	PHP 3.00
 Group:		Development/Languages/PHP
-Source0:	http://pear.php.net/get/%{_pearname}-%{version}.tgz
-# Source0-md5:	34276bfa0d59d5df11d84ec38896c34a
+Source0:	http://pear.php.net/get/%{_pearname}-%{version}%{_rc}.tgz
+# Source0-md5:	d96ccefa7cfce8b0f24216b8f5041ba4
 Patch0:		%{name}-includes_fix.patch
 Patch1:		%{name}-html_treemenu_includes_fix.patch
+Patch2:		%{name}-smarty.patch
 URL:		http://pear.php.net/package/PhpDocumentor/
-BuildRequires:	rpm-php-pearprov >= 4.0.2-98
-BuildRequires:	sed >= 4.0
-Requires:	php-pear
+BuildRequires:	rpm-php-pearprov >= 4.4.2-10.2
+Requires:	php-pear >= 4:1.0-2.8
 Requires:	php-cli
 Requires:	php-pcre
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-# dunno, i need this package NOW
-%define		_noautoreq	'pear(@WEB-DIR@.*)' 'pear(phpDocumentor/.*)'
+%define		_smartyplugindir	%{php_pear_dir}/Smarty/plugins
+
+# don't require %{php_pear_dir}/data files we provide.
+# TODO treemenu needs patching (removing from this package)
+# pear/PhpDocumentor can optionally use package "pear/XML_Beautifier" (version >= 1.1)
+%define		_noautoreq	'pear(phpDocumentor/.*)' 'pear(%{php_pear_dir}/data/.*)' 'pear(XML/Beautifier/.*)' 'pear(HTML_TreeMenu-1.1.2/TreeMenu.php)'
 
 %description
 The phpDocumentor tool is a standalone auto-documentor similar to
@@ -116,32 +120,29 @@ Mo¿liwo¶ci (krótka lista):
 Ta klasa ma w PEAR status: %{_status}.
 
 %prep
-%setup -q -c
-%patch0 -p0
-%patch1 -p0
+%pear_package_setup
 
-cd %{_pearname}-%{version}
+# remove bundled Smarty cache, poldek goes crazy on them (provides/requires payload exceeded 64k)
+find -name templates_c | xargs -ri sh -c 'rm -rf {}; mkdir {}'
 
-# undos the sources
-find . -type f -print0 | xargs -0 sed -i -e 's,
-$,,'
+# patches
+#%patch0 -p1
+#%patch1 -p1
+%patch2 -p1
 
-grep -rl @DATA-DIR@ . | xargs -r sed -i -e 's,@DATA-DIR@,%{php_pear_dir},g'
+# remove bundled Smarty. use system one.
+mkdir plugins
+mv ./%{php_pear_dir}/PhpDocumentor/phpDocumentor/Smarty-*/libs/plugins/\
+{block.strip.php,function.{assign,var_dump}.php,modifier.{htmlentities,rawurlencode}.php} plugins
+rm -rf ./%{php_pear_dir}/PhpDocumentor/phpDocumentor/Smarty-*
+rm -rf ./%{php_pear_dir}/data/PhpDocumentor/phpDocumentor/Smarty-*
 
-# Set up correct path
-sed -i -e 's#@PHP-BIN@#%{_bindir}/php#' pear-phpdoc
-
-# rename
-cd phpDocumentor
-for a in Converter.inc IntermediateParser.inc Setup.inc.php; do
-	mv pear-$a $a
-done
-
-# wasn't bundled before. so remove
-rm -f Smarty-2.5.0/{BUGS,COPYING.lib,ChangeLog,FAQ,INSTALL,NEWS,README,RELEASE_NOTES,TODO}
+# useless
+cd ./%{php_pear_dir}
+rm -rf tests/PhpDocumentor/Documentation/tests
 
 # and these. correct if it's wrong
-cd Converters/HTML
+cd data/PhpDocumentor/phpDocumentor/Converters/HTML
 rm -f \
 	Smarty/templates/default/templates/layout.css \
 	Smarty/templates/default/templates/style.css \
@@ -152,21 +153,29 @@ rm -f \
 %install
 rm -rf $RPM_BUILD_ROOT
 
-# Create directory tree
-install -d $RPM_BUILD_ROOT{%{_bindir},%{php_pear_dir}/%{_class}}
-
-cd %{_pearname}-%{version}
-cp -a docbuilder media phpDocumentor scripts user $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}
-install pear-phpdoc $RPM_BUILD_ROOT%{_bindir}/phpdoc
-install phpdoc.php new_phpdoc.php phpDocumentor.ini $RPM_BUILD_ROOT%{php_pear_dir}/%{_class}
+install -d $RPM_BUILD_ROOT{%{_bindir},%{php_pear_dir},%{_smartyplugindir}}
+cp -a ./%{_bindir}/phpdoc $RPM_BUILD_ROOT%{_bindir}
+%pear_package_install
+cp -a plugins/* $RPM_BUILD_ROOT%{_smartyplugindir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%post
+if [ -f %{_docdir}/%{name}-%{version}/optional-packages.txt ]; then
+	cat %{_docdir}/%{name}-%{version}/optional-packages.txt
+fi
+
 %files
 %defattr(644,root,root,755)
-%doc %{_pearname}-%{version}/{Authors,ChangeLog,FAQ,INSTALL,PHPLICENSE.txt,README,Release*,poweredbyphpdoc.gif}
-%doc %{_pearname}-%{version}/{Documentation,tutorials}
+%doc install.log optional-packages.txt
+%doc docs/%{_pearname}/{Authors,ChangeLog,FAQ,INSTALL,PHPLICENSE.txt,README,Release*}
+%doc docs/%{_pearname}/{Documentation,tutorials}
+%{php_pear_dir}/.registry/*.reg
 %attr(755,root,root) %{_bindir}/phpdoc
-%dir %{php_pear_dir}/%{_class}
-%{php_pear_dir}/%{_class}/*
+
+%{php_pear_dir}/%{_class}
+%{php_pear_dir}/data/%{_class}
+
+# extra Smarty plugins
+%{_smartyplugindir}/*
