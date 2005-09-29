@@ -1,6 +1,7 @@
 # TODO:
 # - solve requires issue (something like patch0, but a bit extended?)
 # - maybe PhpDocumentor.ini should go to /etc/php ?
+# - subpackage for -tutorial?
 %include	/usr/lib/rpm/macros.php
 %define		_class		PhpDocumentor
 %define		_status		beta
