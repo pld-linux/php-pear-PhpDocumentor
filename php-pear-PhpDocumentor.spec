@@ -2,6 +2,7 @@
 # - solve requires issue (something like patch0, but a bit extended?)
 # - maybe PhpDocumentor.ini should go to /etc/php ?
 # - subpackage for -tutorial?
+# - subpackage for -cli?
 # - subpackage docBuilder for web interface in %{php_pear_dir}/data/%{_pearname}
 %include	/usr/lib/rpm/macros.php
 %define		_class		PhpDocumentor
@@ -13,7 +14,7 @@ Summary(pl):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto z
 Name:		php-pear-%{_pearname}
 Version:	1.3.0
 %define	_rc RC3
-%define	_rel 21.1
+%define	_rel 21.2
 Release:	0.%{_rc}.%{_rel}
 License:	PHP 3.00
 Group:		Development/Languages/PHP
@@ -24,8 +25,10 @@ Patch1:		%{name}-html_treemenu_includes_fix.patch
 Patch2:		%{name}-smarty.patch
 URL:		http://pear.php.net/package/PhpDocumentor/
 BuildRequires:	rpm-php-pearprov >= 4.4.2-10.2
-Requires:	php-pear >= 4:1.0-2.8
 Requires:	php-cli
+Requires:	php-common >= 3:4.1.0
+Requires:	php-pear >= 4:1.0-2.8
+Requires:	php-pear-Archive_Tar >= 1.1
 Requires:	php-pcre
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
