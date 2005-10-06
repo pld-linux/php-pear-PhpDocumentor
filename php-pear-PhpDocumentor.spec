@@ -14,7 +14,7 @@ Summary(pl):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto z
 Name:		php-pear-%{_pearname}
 Version:	1.3.0
 %define	_rc RC3
-%define	_rel 21.2
+%define	_rel 22
 Release:	0.%{_rc}.%{_rel}
 License:	PHP 3.00
 Group:		Development/Languages/PHP
