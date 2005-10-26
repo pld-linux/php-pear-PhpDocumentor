@@ -30,7 +30,7 @@ Requires:	php-common >= 3:4.1.0
 Requires:	php-pear >= 4:1.0-2.8
 Requires:	php-pear-Archive_Tar >= 1.1
 Requires:	php-pcre
-Requires:	Smarty >= 2.6.10-3
+Conflicts:	Smarty < 2.6.10-3
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
