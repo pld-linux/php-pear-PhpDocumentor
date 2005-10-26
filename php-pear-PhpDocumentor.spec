@@ -14,7 +14,7 @@ Summary(pl):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto z
 Name:		php-pear-%{_pearname}
 Version:	1.3.0
 %define	_rc RC3
-%define	_rel 22
+%define	_rel 23
 Release:	0.%{_rc}.%{_rel}
 License:	PHP 3.00
 Group:		Development/Languages/PHP
@@ -30,10 +30,11 @@ Requires:	php-common >= 3:4.1.0
 Requires:	php-pear >= 4:1.0-2.8
 Requires:	php-pear-Archive_Tar >= 1.1
 Requires:	php-pcre
+Requires:	Smarty >= 2.6.10-3
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		_smartyplugindir	%{php_pear_dir}/Smarty/plugins
+%define		_smartyplugindir	%{_datadir}/php/Smarty/plugins
 
 # exclude optional dependencies
 # TODO treemenu needs patching (removing from this package)
@@ -144,7 +145,7 @@ Testy dla PEAR::%{_pearname}.
 find -name templates_c | xargs -ri sh -c 'rm -rf {}; mkdir {}'
 
 # patches
-#%patch0 -p1
+%patch0 -p1
 #%patch1 -p1
 %patch2 -p1
 
