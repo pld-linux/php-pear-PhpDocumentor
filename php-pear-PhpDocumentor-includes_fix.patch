@@ -1,6 +1,5 @@
-diff -burN PhpDocumentor-1.2.2.1-orig/new_phpdoc.php PhpDocumentor-1.2.2.1/new_phpdoc.php
---- PhpDocumentor-1.2.2.1-orig/new_phpdoc.php	2003-08-31 10:48:50.899229872 +0200
-+++ PhpDocumentor-1.2.2.1/new_phpdoc.php	2003-08-31 11:51:36.698741328 +0200
+--- ./usr/share/pear/data/PhpDocumentor/new_phpdoc.php	2005-10-26 17:39:58.000000000 +0300
++++ /usr/share/pear/data/PhpDocumentor/new_phpdoc.php	2005-10-26 17:47:38.000000000 +0300
 @@ -51,7 +51,7 @@
  /**
  * common file information
