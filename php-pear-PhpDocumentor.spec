@@ -13,14 +13,14 @@ Summary:	%{_pearname} - provides automatic documenting of PHP API directly from 
 Summary(pl):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto ze ¼róde³
 Name:		php-pear-%{_pearname}
 Version:	1.3.0
-%define	_rc RC3
-%define	_rel 23
+%define	_rc RC5
+%define	_rel 1
 Release:	0.%{_rc}.%{_rel}
 Epoch:		0
 License:	PHP 3.00
 Group:		Development/Languages/PHP
 Source0:	http://pear.php.net/get/%{_pearname}-%{version}%{_rc}.tgz
-# Source0-md5:	d96ccefa7cfce8b0f24216b8f5041ba4
+# Source0-md5:	1a8875f03be2315cfc4829247407441a
 Patch0:		%{name}-includes_fix.patch
 Patch1:		%{name}-html_treemenu_includes_fix.patch
 Patch2:		%{name}-smarty.patch
@@ -161,7 +161,7 @@ rm -rf ./%{php_pear_dir}/data/PhpDocumentor/phpDocumentor/Smarty-*
 
 install -d docs/%{_pearname}
 mv ./%{php_pear_dir}/%{_class}/scripts docs/%{_pearname}
-mv ./%{_bindir}/scripts/* docs/%{_pearname}/scripts
+mv ./%{_bindir}/%{_class}/scripts/* docs/%{_pearname}/scripts
 
 %install
 rm -rf $RPM_BUILD_ROOT
