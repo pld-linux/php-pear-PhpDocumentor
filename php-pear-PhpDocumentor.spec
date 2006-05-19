@@ -10,12 +10,12 @@
 %define		_status		beta
 %define		_pearname	%{_class}
 
+%define	_rc RC6
+%define	_rel 0.2
 Summary:	%{_pearname} - provides automatic documenting of PHP API directly from source
 Summary(pl):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto ze ¼róde³
 Name:		php-pear-%{_pearname}
 Version:	1.3.0
-%define	_rc RC6
-%define	_rel 0.1
 Release:	0.%{_rc}.%{_rel}
 Epoch:		0
 License:	PHP 3.00
@@ -23,16 +23,18 @@ Group:		Development/Languages/PHP
 Source0:	http://pear.php.net/get/%{_pearname}-%{version}%{_rc}.tgz
 # Source0-md5:	e6f31c313b0b06c09acaf7047e6a5b23
 Patch0:		%{name}-includes_fix.patch
-Patch1:		%{name}-html_treemenu_includes_fix.patch
+Patch1:		%{name}-smarty.patch
+Patch2:		%{name}-html_treemenu_includes_fix.patch
 URL:		http://pear.php.net/package/PhpDocumentor/
 BuildRequires:	php-pear-PEAR
 BuildRequires:	rpm-php-pearprov >= 4.4.2-10.2
+Requires:	Smarty >= 2.6.10-4
 Requires:	php-cli
-Requires:	php-common >= 3:4.1.0
+Requires:	php-common >= 3:4.3.0
+Requires:	php-pcre
 Requires:	php-pear >= 4:1.0-2.8
 Requires:	php-pear-Archive_Tar >= 1.1
-Requires:	php-pcre
-Conflicts:	Smarty < 2.6.10-3
+Requires:	php-tokenizer
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -142,12 +144,9 @@ Testy dla PEAR::%{_pearname}.
 
 %prep
 %pear_package_setup
-
-# remove bundled Smarty cache, poldek goes crazy on them (provides/requires payload exceeded 64k)
-find -name templates_c | xargs -ri sh -c 'rm -rf {}; mkdir {}'
-
 # patches
 %patch0 -p1
+%patch1 -p1
 #%patch1 -p1
 
 rm -f docs/%{_pearname}/PHPLICENSE # PHP License
