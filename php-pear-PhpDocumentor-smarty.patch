@@ -1,0 +1,11 @@
+--- ./usr/share/pear/PhpDocumentor/phpDocumentor/Converter.inc	2006-05-19 22:49:14.784276197 +0300
++++ ./usr/share/pear/PhpDocumentor/phpDocumentor/Converter.inc.new	2006-05-19 22:51:23.477173297 +0300
+@@ -41,7 +41,7 @@
+ /**
+  * Smarty template files
+  */
+-include_once("phpDocumentor/Smarty-2.6.0/libs/Smarty.class.php");
++include_once("/usr/share/php/Smarty/Smarty.class.php");
+ /**
+  * Base class for all output converters.
+  *
