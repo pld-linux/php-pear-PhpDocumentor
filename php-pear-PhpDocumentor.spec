@@ -4,6 +4,7 @@
 # - subpackage for -tutorial?
 # - subpackage for -cli?
 # - subpackage docBuilder for web interface in %{php_pear_dir}/data/%{_pearname}
+# - treemenu needs patching (removing from this package)
 %include	/usr/lib/rpm/macros.php
 %define		_class		PhpDocumentor
 %define		_status		beta
@@ -13,17 +14,16 @@ Summary:	%{_pearname} - provides automatic documenting of PHP API directly from 
 Summary(pl):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto ze ¼róde³
 Name:		php-pear-%{_pearname}
 Version:	1.3.0
-%define	_rc RC5
-%define	_rel 1
+%define	_rc RC6
+%define	_rel 0.1
 Release:	0.%{_rc}.%{_rel}
 Epoch:		0
 License:	PHP 3.00
 Group:		Development/Languages/PHP
 Source0:	http://pear.php.net/get/%{_pearname}-%{version}%{_rc}.tgz
-# Source0-md5:	1a8875f03be2315cfc4829247407441a
+# Source0-md5:	e6f31c313b0b06c09acaf7047e6a5b23
 Patch0:		%{name}-includes_fix.patch
 Patch1:		%{name}-html_treemenu_includes_fix.patch
-Patch2:		%{name}-smarty.patch
 URL:		http://pear.php.net/package/PhpDocumentor/
 BuildRequires:	php-pear-PEAR
 BuildRequires:	rpm-php-pearprov >= 4.4.2-10.2
@@ -39,7 +39,6 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_smartyplugindir	%{_datadir}/php/Smarty/plugins
 
 # exclude optional dependencies
-# TODO treemenu needs patching (removing from this package)
 # don't require %{php_pear_dir}/data files we provide.
 %define		_noautoreq	'pear(phpDocumentor/.*)' 'pear(%{php_pear_dir}/data/.*)' 'pear(XML/Beautifier/.*)' 'pear(HTML_TreeMenu-1.1.2/TreeMenu.php)'
 
@@ -150,7 +149,6 @@ find -name templates_c | xargs -ri sh -c 'rm -rf {}; mkdir {}'
 # patches
 %patch0 -p1
 #%patch1 -p1
-%patch2 -p1
 
 rm -f docs/%{_pearname}/PHPLICENSE # PHP License
 
@@ -163,7 +161,7 @@ rm -rf ./%{php_pear_dir}/data/PhpDocumentor/phpDocumentor/Smarty-*
 
 install -d docs/%{_pearname}
 mv ./%{php_pear_dir}/%{_class}/scripts docs/%{_pearname}
-mv ./%{_bindir}/%{_class}/scripts/* docs/%{_pearname}/scripts
+mv ./%{_bindir}/scripts/* docs/%{_pearname}/scripts
 
 %install
 rm -rf $RPM_BUILD_ROOT
