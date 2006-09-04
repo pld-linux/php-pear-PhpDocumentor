@@ -7,21 +7,19 @@
 # - treemenu needs patching (removing from this package)
 %include	/usr/lib/rpm/macros.php
 %define		_class		PhpDocumentor
-%define		_status		beta
+%define		_status		stable
 %define		_pearname	%{_class}
 
-%define	_rc RC6
-%define	_rel 0.2
 Summary:	%{_pearname} - provides automatic documenting of PHP API directly from source
 Summary(pl):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto ze ¼róde³
 Name:		php-pear-%{_pearname}
 Version:	1.3.0
-Release:	0.%{_rc}.%{_rel}
+Release:	1
 Epoch:		0
 License:	PHP 3.00
 Group:		Development/Languages/PHP
-Source0:	http://pear.php.net/get/%{_pearname}-%{version}%{_rc}.tgz
-# Source0-md5:	e6f31c313b0b06c09acaf7047e6a5b23
+Source0:	http://pear.php.net/get/%{_pearname}-%{version}.tgz
+# Source0-md5:	aed75aaeceb4439ca0534f98e2513683
 Patch0:		%{name}-includes_fix.patch
 Patch1:		%{name}-smarty.patch
 Patch2:		%{name}-html_treemenu_includes_fix.patch
@@ -145,10 +143,8 @@ Testy dla PEAR::%{_pearname}.
 
 %prep
 %pear_package_setup
-# patches
 %patch0 -p1
 %patch1 -p1
-#%patch1 -p1
 
 rm -f docs/%{_pearname}/PHPLICENSE # PHP License
 
@@ -159,6 +155,7 @@ mv ./%{php_pear_dir}/PhpDocumentor/phpDocumentor/Smarty-*/libs/plugins/\
 rm -rf ./%{php_pear_dir}/PhpDocumentor/phpDocumentor/Smarty-*
 rm -rf ./%{php_pear_dir}/data/PhpDocumentor/phpDocumentor/Smarty-*
 
+# packaging corrections. we want sample scripts in doc
 install -d docs/%{_pearname}
 mv ./%{php_pear_dir}/%{_class}/scripts docs/%{_pearname}
 mv ./%{_bindir}/scripts/* docs/%{_pearname}/scripts
@@ -167,8 +164,8 @@ mv ./%{_bindir}/scripts/* docs/%{_pearname}/scripts
 rm -rf $RPM_BUILD_ROOT
 
 install -d $RPM_BUILD_ROOT{%{_bindir},%{php_pear_dir},%{_smartyplugindir}}
-cp -a ./%{_bindir}/phpdoc $RPM_BUILD_ROOT%{_bindir}
 %pear_package_install
+cp -a ./%{_bindir}/phpdoc $RPM_BUILD_ROOT%{_bindir}
 cp -a plugins/* $RPM_BUILD_ROOT%{_smartyplugindir}
 
 %clean
