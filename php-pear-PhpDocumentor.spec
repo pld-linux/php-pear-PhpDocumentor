@@ -14,7 +14,7 @@ Summary:	%{_pearname} - provides automatic documenting of PHP API directly from 
 Summary(pl):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto ze ¼róde³
 Name:		php-pear-%{_pearname}
 Version:	1.3.1
-Release:	1
+Release:	2
 Epoch:		0
 License:	PHP 3.00
 Group:		Development/Languages/PHP
@@ -28,12 +28,12 @@ BuildRequires:	php-pear-PEAR
 BuildRequires:	rpm-php-pearprov >= 4.4.2-10.2
 BuildRequires:	rpmbuild(macros) >= 1.300
 Requires:	Smarty >= 2.6.10-4
+Requires:	php(pcre)
+Requires:	php(tokenizer)
 Requires:	php-cli
 Requires:	php-common >= 3:4.3.0
-Requires:	php-pcre
 Requires:	php-pear >= 4:1.0-2.8
 Requires:	php-pear-Archive_Tar >= 1.1
-Requires:	php-tokenizer
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
