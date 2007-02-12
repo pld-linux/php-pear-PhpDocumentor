@@ -11,7 +11,7 @@
 %define		_pearname	%{_class}
 
 Summary:	%{_pearname} - provides automatic documenting of PHP API directly from source
-Summary(pl):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto ze ¼róde³
+Summary(pl.UTF-8):   %{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto ze ÅºrÃ³deÅ‚
 Name:		php-pear-%{_pearname}
 Version:	1.3.1
 Release:	2
@@ -83,53 +83,53 @@ Features (short list):
 
 In PEAR status of this package is: %{_status}.
 
-%description -l pl
-phpDocumentor jest podobnym do JavaDoc samodzielnym narzêdziem do
-automatycznego tworzenia dokumentacji napisanym w PHP. W porównaniu do
-PHPDoc jest du¿o szybszy, parsuje wiêkszy zakres plików PHP, oraz
-umo¿liwia dostosowanie do upodobañ u¿ytkownika za pomoc± miêdzy innymi
-11 szablonów HTML, mo¿liwo¶ci zapisu plików w formacie plików pomocy
-Windows (CHM), PDF czy XML DocBook peardoc2 (u¿ywanym przy tworzeniu
-dokumentacji do PEAR). Ponadto phpDocumentor mo¿e pod¶wietlaæ i ³±czyæ
-kod ¼ród³owy za pomoc± PHPXref.
+%description -l pl.UTF-8
+phpDocumentor jest podobnym do JavaDoc samodzielnym narzÄ™dziem do
+automatycznego tworzenia dokumentacji napisanym w PHP. W porÃ³wnaniu do
+PHPDoc jest duÅ¼o szybszy, parsuje wiÄ™kszy zakres plikÃ³w PHP, oraz
+umoÅ¼liwia dostosowanie do upodobaÅ„ uÅ¼ytkownika za pomocÄ… miÄ™dzy innymi
+11 szablonÃ³w HTML, moÅ¼liwoÅ›ci zapisu plikÃ³w w formacie plikÃ³w pomocy
+Windows (CHM), PDF czy XML DocBook peardoc2 (uÅ¼ywanym przy tworzeniu
+dokumentacji do PEAR). Ponadto phpDocumentor moÅ¼e podÅ›wietlaÄ‡ i Å‚Ä…czyÄ‡
+kod ÅºrÃ³dÅ‚owy za pomocÄ… PHPXref.
 
-Mo¿liwo¶ci (krótka lista):
-- zapis do formatu HTML, PDF (bezpo¶rednio), CHM (za pomoc±
-  kompilatora plików pomocy windows), XML DocBook
+MoÅ¼liwoÅ›ci (krÃ³tka lista):
+- zapis do formatu HTML, PDF (bezpoÅ›rednio), CHM (za pomocÄ…
+  kompilatora plikÃ³w pomocy windows), XML DocBook
 - bardzo szybki
-- interfejs WWW oraz z linii poleceñ
-- w pe³ni konfigurowalny zapis z u¿yciem szablonów opartych o Smarty
-- rozpoznaje dokumentacjê JavaDoc za pomoc± specjalnych znaczników
+- interfejs WWW oraz z linii poleceÅ„
+- w peÅ‚ni konfigurowalny zapis z uÅ¼yciem szablonÃ³w opartych o Smarty
+- rozpoznaje dokumentacjÄ™ JavaDoc za pomocÄ… specjalnych znacznikÃ³w
   dostosowanych do PHP 4
-- automatyczne ³±czenie, diagramy dziedziczenia klas i inteligentne
-  przes³anianie
-- konfigurowalne pod¶wietlanie kodu ¼ród³owego z odno¶nikami w stylu
+- automatyczne Å‚Ä…czenie, diagramy dziedziczenia klas i inteligentne
+  przesÅ‚anianie
+- konfigurowalne podÅ›wietlanie kodu ÅºrÃ³dÅ‚owego z odnoÅ›nikami w stylu
   phpxref
-- parsuje standardowe pliki README/CHANGELOG/INSTALL/FAQ i do³±cza je
-  bezpo¶rednio do dokumentacji
-- generuje listê do zrobienia korzystaj±c ze znaczników @todo w kodzie
-- generuje ró¿n± dokumentacjê w zale¿no¶ci od znaczników @access
+- parsuje standardowe pliki README/CHANGELOG/INSTALL/FAQ i doÅ‚Ä…cza je
+  bezpoÅ›rednio do dokumentacji
+- generuje listÄ™ do zrobienia korzystajÄ…c ze znacznikÃ³w @todo w kodzie
+- generuje rÃ³Å¼nÄ… dokumentacjÄ™ w zaleÅ¼noÅ›ci od znacznikÃ³w @access
   private, @internal i {@internal}
-- przyk³adowe pliki PHP mog± byæ umieszczane bezpo¶rednio w
-  dokumentacji z pod¶wietlaniem sk³adni i po³±czeniami phpxref za pomoc±
+- przykÅ‚adowe pliki PHP mogÄ… byÄ‡ umieszczane bezpoÅ›rednio w
+  dokumentacji z podÅ›wietlaniem skÅ‚adni i poÅ‚Ä…czeniami phpxref za pomocÄ…
   znacznika @example
-- po³±czenia pomiêdzy zewnêtrznym podrêcznikiem i dokumentacj± API
-  jest mo¿liwe na poziomie podsekcji we wszystkich formatach wyj¶ciowych
-- ³atwo rozszerzalny za pomoc± Convertera dla specyficznych potrzeb
+- poÅ‚Ä…czenia pomiÄ™dzy zewnÄ™trznym podrÄ™cznikiem i dokumentacjÄ… API
+  jest moÅ¼liwe na poziomie podsekcji we wszystkich formatach wyjÅ›ciowych
+- Å‚atwo rozszerzalny za pomocÄ… Convertera dla specyficznych potrzeb
   dokumentacji
-- pe³na dokumentacja ka¿dej z mo¿liwo¶ci, podrêcznik mo¿e byæ
-  wygenerowany bezpo¶rednio z kodu ¼ród³owego za pomoc± "phpdoc -c
+- peÅ‚na dokumentacja kaÅ¼dej z moÅ¼liwoÅ›ci, podrÄ™cznik moÅ¼e byÄ‡
+  wygenerowany bezpoÅ›rednio z kodu ÅºrÃ³dÅ‚owego za pomocÄ… "phpdoc -c
   makedocs" w dowolnie wybranym formacie
-- aktualny podrêcznik zawsze dostêpny pod adresem
+- aktualny podrÄ™cznik zawsze dostÄ™pny pod adresem
   http://www.phpdoc.org/manual.php
-- za pomoc± plików .ini mo¿na kontrolowaæ format wyj¶cia, mo¿na
-  generowaæ kilka dokumentów naraz
+- za pomocÄ… plikÃ³w .ini moÅ¼na kontrolowaÄ‡ format wyjÅ›cia, moÅ¼na
+  generowaÄ‡ kilka dokumentÃ³w naraz
 
 Ta klasa ma w PEAR status: %{_status}.
 
 %package tests
 Summary:	Tests for PEAR::%{_pearname}
-Summary(pl):	Testy dla PEAR::%{_pearname}
+Summary(pl.UTF-8):   Testy dla PEAR::%{_pearname}
 Group:		Development/Languages/PHP
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 AutoReq:	no
@@ -138,7 +138,7 @@ AutoProv:	no
 %description tests
 Tests for PEAR::%{_pearname}.
 
-%description tests -l pl
+%description tests -l pl.UTF-8
 Testy dla PEAR::%{_pearname}.
 
 %prep
