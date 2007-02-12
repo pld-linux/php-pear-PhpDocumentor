@@ -11,7 +11,7 @@
 %define		_pearname	%{_class}
 
 Summary:	%{_pearname} - provides automatic documenting of PHP API directly from source
-Summary(pl.UTF-8):   %{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto ze źródeł
+Summary(pl.UTF-8):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto ze źródeł
 Name:		php-pear-%{_pearname}
 Version:	1.3.1
 Release:	2
@@ -129,7 +129,7 @@ Ta klasa ma w PEAR status: %{_status}.
 
 %package tests
 Summary:	Tests for PEAR::%{_pearname}
-Summary(pl.UTF-8):   Testy dla PEAR::%{_pearname}
+Summary(pl.UTF-8):	Testy dla PEAR::%{_pearname}
 Group:		Development/Languages/PHP
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 AutoReq:	no
