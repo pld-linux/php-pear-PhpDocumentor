@@ -9,3 +9,24 @@
  
  // find the .ini directory by parsing phpDocumentor.ini and extracting _phpDocumentor_options[userdir]
  $ini = phpDocumentor_parse_ini_file($_phpDocumentor_install_dir . PATH_DELIMITER . 'phpDocumentor.ini', true);
+--- PhpDocumentor-1.4.0/usr/share/pear/PhpDocumentor/AllTests.php~	2007-09-26 21:15:12.000000000 +0200
++++ PhpDocumentor-1.4.0/usr/share/pear/PhpDocumentor/AllTests.php	2007-09-26 21:36:36.000000000 +0200
+@@ -39,12 +39,12 @@
+ /*
+  * You must add each additional class-level test suite file here
+  */
+-require_once 'Documentation/tests/phpDocumentorSetupTests.php';
+-require_once 'Documentation/tests/phpDocumentorTParserTests.php';
+-require_once 'Documentation/tests/IntermediateParserTests.php';
+-require_once 'Documentation/tests/HighlightParserTests.php';
+-require_once 'Documentation/tests/ParserClassTests.php';
+-require_once 'Documentation/tests/ParserPageTests.php';
++require_once 'tests/PhpDocumentor/Documentation/tests/phpDocumentorSetupTests.php';
++require_once 'tests/PhpDocumentor/Documentation/tests/phpDocumentorTParserTests.php';
++require_once 'tests/PhpDocumentor/Documentation/tests/IntermediateParserTests.php';
++require_once 'tests/PhpDocumentor/Documentation/tests/HighlightParserTests.php';
++require_once 'tests/PhpDocumentor/Documentation/tests/ParserClassTests.php';
++require_once 'tests/PhpDocumentor/Documentation/tests/ParserPageTests.php';
+ 
+ 
+ /**
