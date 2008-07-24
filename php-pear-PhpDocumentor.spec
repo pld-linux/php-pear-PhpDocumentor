@@ -13,18 +13,16 @@
 Summary:	%{_pearname} - provides automatic documenting of PHP API directly from source
 Summary(pl.UTF-8):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto ze źródeł
 Name:		php-pear-%{_pearname}
-Version:	1.4.0
-Release:	1
+Version:	1.4.2
+Release:	0.1
 Epoch:		0
 License:	PHP 3.00
 Group:		Development/Languages/PHP
 Source0:	http://pear.php.net/get/%{_pearname}-%{version}.tgz
-# Source0-md5:	058cafda76f10a693cd33687fb2b9144
-Patch0:		%{name}-includes_fix.patch
-Patch1:		%{name}-smarty.patch
-Patch2:		%{name}-html_treemenu_includes_fix.patch
+# Source0-md5:	778bea6edb876c70d906bec8c4490a0e
+Patch0:		%{name}-smarty.patch
 URL:		http://pear.php.net/package/PhpDocumentor/
-BuildRequires:	php-pear-PEAR
+BuildRequires:	php-pear-PEAR >= 1:1.4.6
 BuildRequires:	rpm-php-pearprov >= 4.4.2-10.2
 BuildRequires:	rpmbuild(macros) >= 1.300
 Requires:	Smarty >= 2.6.10-4
@@ -143,7 +141,6 @@ Testy dla PEAR::%{_pearname}.
 
 %prep
 %pear_package_setup
-%patch0 -p1
 %patch1 -p1
 
 rm -f docs/%{_pearname}/PHPLICENSE # PHP License
@@ -158,7 +155,6 @@ rm -rf ./%{php_pear_dir}/data/PhpDocumentor/phpDocumentor/Smarty-*
 # packaging corrections. we want sample scripts in doc
 install -d docs/%{_pearname}
 mv ./%{php_pear_dir}/%{_class}/scripts docs/%{_pearname}
-mv ./%{_bindir}/scripts/* docs/%{_pearname}/scripts
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -183,7 +179,6 @@ fi
 %{php_pear_dir}/.registry/*.reg
 %attr(755,root,root) %{_bindir}/phpdoc
 %{php_pear_dir}/%{_class}
-%exclude %{php_pear_dir}/%{_class}/AllTests.php
 %{php_pear_dir}/data/%{_class}
 
 # extra Smarty plugins
@@ -191,5 +186,4 @@ fi
 
 %files tests
 %defattr(644,root,root,755)
-%{php_pear_dir}/%{_class}/AllTests.php
 %{php_pear_dir}/tests/*
