@@ -14,7 +14,7 @@ Summary:	%{_pearname} - provides automatic documenting of PHP API directly from 
 Summary(pl.UTF-8):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto ze źródeł
 Name:		php-pear-%{_pearname}
 Version:	1.4.2
-Release:	0.1
+Release:	1
 Epoch:		0
 License:	PHP 3.00
 Group:		Development/Languages/PHP
