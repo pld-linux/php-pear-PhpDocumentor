@@ -141,7 +141,7 @@ Testy dla PEAR::%{_pearname}.
 
 %prep
 %pear_package_setup
-%patch1 -p1
+%patch0 -p1
 
 rm -f docs/%{_pearname}/PHPLICENSE # PHP License
 
