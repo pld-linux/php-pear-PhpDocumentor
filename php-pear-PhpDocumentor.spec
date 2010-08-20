@@ -13,13 +13,13 @@
 Summary:	%{_pearname} - provides automatic documenting of PHP API directly from source
 Summary(pl.UTF-8):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto ze źródeł
 Name:		php-pear-%{_pearname}
-Version:	1.4.2
+Version:	1.4.3
 Release:	1
 Epoch:		0
 License:	PHP 3.00
 Group:		Development/Languages/PHP
 Source0:	http://pear.php.net/get/%{_pearname}-%{version}.tgz
-# Source0-md5:	778bea6edb876c70d906bec8c4490a0e
+# Source0-md5:	180ea5bf2ab4f729d0cd09d99f7b2520
 Patch0:		%{name}-smarty.patch
 URL:		http://pear.php.net/package/PhpDocumentor/
 BuildRequires:	php-pear-PEAR >= 1:1.4.6
@@ -130,8 +130,8 @@ Summary:	Tests for PEAR::%{_pearname}
 Summary(pl.UTF-8):	Testy dla PEAR::%{_pearname}
 Group:		Development/Languages/PHP
 Requires:	%{name} = %{epoch}:%{version}-%{release}
-AutoReq:	no
 AutoProv:	no
+AutoReq:	no
 
 %description tests
 Tests for PEAR::%{_pearname}.
