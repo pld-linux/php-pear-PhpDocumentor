@@ -14,7 +14,7 @@ Summary:	%{_pearname} - provides automatic documenting of PHP API directly from 
 Summary(pl.UTF-8):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto ze źródeł
 Name:		php-pear-%{_pearname}
 Version:	1.4.3
-Release:	1
+Release:	2
 Epoch:		0
 License:	PHP 3.00
 Group:		Development/Languages/PHP
@@ -32,6 +32,7 @@ Requires:	php-cli
 Requires:	php-common >= 3:4.3.0
 Requires:	php-pear >= 4:1.0-2.8
 Requires:	php-pear-Archive_Tar >= 1.1
+Suggests:	php-pear-XML_Beautifier
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
