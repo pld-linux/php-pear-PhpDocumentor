@@ -1,39 +1,36 @@
 # TODO:
 # - solve requires issue (something like patch0, but a bit extended?)
 # - maybe PhpDocumentor.ini should go to /etc/php ?
-# - subpackage for -tutorial?
 # - subpackage for -cli?
 # - subpackage docBuilder for web interface in %{php_pear_dir}/data/%{_pearname}
 # - treemenu needs patching (removing from this package)
-%include	/usr/lib/rpm/macros.php
-%define		_class		PhpDocumentor
 %define		_status		stable
-%define		_pearname	%{_class}
-
+%define		_pearname	PhpDocumentor
+%define		php_min_version 5.0.0
+%include	/usr/lib/rpm/macros.php
 Summary:	%{_pearname} - provides automatic documenting of PHP API directly from source
 Summary(pl.UTF-8):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto ze źródeł
 Name:		php-pear-%{_pearname}
-Version:	1.4.0
-Release:	1
-Epoch:		0
-License:	PHP 3.00
+Version:	1.4.3
+Release:	4
+License:	LGPL v2.1
 Group:		Development/Languages/PHP
 Source0:	http://pear.php.net/get/%{_pearname}-%{version}.tgz
-# Source0-md5:	058cafda76f10a693cd33687fb2b9144
-Patch0:		%{name}-includes_fix.patch
-Patch1:		%{name}-smarty.patch
-Patch2:		%{name}-html_treemenu_includes_fix.patch
+# Source0-md5:	180ea5bf2ab4f729d0cd09d99f7b2520
+Patch0:		%{name}-smarty.patch
 URL:		http://pear.php.net/package/PhpDocumentor/
-BuildRequires:	php-pear-PEAR
+BuildRequires:	php-pear-PEAR >= 1:1.4.6
 BuildRequires:	rpm-php-pearprov >= 4.4.2-10.2
-BuildRequires:	rpmbuild(macros) >= 1.300
+BuildRequires:	rpmbuild(macros) >= 1.593
 Requires:	Smarty >= 2.6.10-4
-Requires:	php(pcre)
-Requires:	php(tokenizer)
 Requires:	php-cli
-Requires:	php-common >= 3:4.3.0
+Requires:	php-common >= 4:%{php_min_version}
+Requires:	php-pcre
 Requires:	php-pear >= 4:1.0-2.8
 Requires:	php-pear-Archive_Tar >= 1.1
+Requires:	php-tokenizer
+Suggests:	php-pear-XML_Beautifier
+Obsoletes:	php-pear-PhpDocumentor-tests
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -41,7 +38,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # exclude optional dependencies
 # don't require %{php_pear_dir}/data files we provide.
-%define		_noautoreq	'pear(phpDocumentor/.*)' 'pear(%{php_pear_dir}/data/.*)' 'pear(XML/Beautifier/.*)' 'pear(HTML_TreeMenu-1.1.2/TreeMenu.php)'
+%define		_noautoreq	pear(phpDocumentor/.*) pear(%{php_pear_dir}/data/.*) pear(XML/Beautifier/.*) pear(HTML_TreeMenu-1.1.2/TreeMenu.php)
 
 %description
 The phpDocumentor tool is a standalone auto-documentor similar to
@@ -127,38 +124,41 @@ Możliwości (krótka lista):
 
 Ta klasa ma w PEAR status: %{_status}.
 
-%package tests
-Summary:	Tests for PEAR::%{_pearname}
-Summary(pl.UTF-8):	Testy dla PEAR::%{_pearname}
-Group:		Development/Languages/PHP
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-AutoReq:	no
-AutoProv:	no
+%package doc
+Summary:	Documentation and tutorial manual PhpDocumentor
+Summary(pl.UTF-8):	Dokumentacja online do %{name}
+Group:		Documentation
 
-%description tests
-Tests for PEAR::%{_pearname}.
-
-%description tests -l pl.UTF-8
-Testy dla PEAR::%{_pearname}.
+%description doc
+Documentation and tutorial manual PhpDocumentor
 
 %prep
 %pear_package_setup
 %patch0 -p1
-%patch1 -p1
-
-rm -f docs/%{_pearname}/PHPLICENSE # PHP License
 
 # remove bundled Smarty. use system one.
 mkdir plugins
 mv ./%{php_pear_dir}/PhpDocumentor/phpDocumentor/Smarty-*/libs/plugins/\
 {block.strip.php,function.{assign,var_dump}.php,modifier.{htmlentities,rawurlencode}.php} plugins
-rm -rf ./%{php_pear_dir}/PhpDocumentor/phpDocumentor/Smarty-*
-rm -rf ./%{php_pear_dir}/data/PhpDocumentor/phpDocumentor/Smarty-*
+%{__rm} -r ./%{php_pear_dir}/PhpDocumentor/phpDocumentor/Smarty-*
+%{__rm} -r ./%{php_pear_dir}/data/PhpDocumentor/phpDocumentor/Smarty-*
 
-# packaging corrections. we want sample scripts in doc
-install -d docs/%{_pearname}
-mv ./%{php_pear_dir}/%{_class}/scripts docs/%{_pearname}
-mv ./%{_bindir}/scripts/* docs/%{_pearname}/scripts
+# maintainer's scripts
+%{__rm} -r ./%{php_pear_dir}/PhpDocumentor/scripts
+
+%{__rm} docs/%{_pearname}/LICENSE # LGPL v2.1
+
+# old release docs
+%{__rm} -r docs/%{_pearname}/Documentation/Release-old
+
+# drop tests
+%{__rm} -r docs/%{_pearname}/Documentation/tests
+
+# doc subpackage
+install -d doc
+mv docs/%{_pearname}/Documentation/* doc
+rmdir docs/%{_pearname}/Documentation
+mv docs/%{_pearname}/tutorials doc
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -171,10 +171,8 @@ cp -a plugins/* $RPM_BUILD_ROOT%{_smartyplugindir}
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post
-if [ -f %{_docdir}/%{name}-%{version}/optional-packages.txt ]; then
-	cat %{_docdir}/%{name}-%{version}/optional-packages.txt
-fi
+%post -p <lua>
+%pear_package_print_optionalpackages
 
 %files
 %defattr(644,root,root,755)
@@ -182,14 +180,12 @@ fi
 %doc docs/%{_pearname}/*
 %{php_pear_dir}/.registry/*.reg
 %attr(755,root,root) %{_bindir}/phpdoc
-%{php_pear_dir}/%{_class}
-%exclude %{php_pear_dir}/%{_class}/AllTests.php
-%{php_pear_dir}/data/%{_class}
+%{php_pear_dir}/PhpDocumentor
+%{php_pear_dir}/data/PhpDocumentor
 
 # extra Smarty plugins
 %{_smartyplugindir}/*
 
-%files tests
+%files doc
 %defattr(644,root,root,755)
-%{php_pear_dir}/%{_class}/AllTests.php
-%{php_pear_dir}/tests/*
+%doc doc/*
