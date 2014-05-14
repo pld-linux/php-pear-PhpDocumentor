@@ -21,7 +21,7 @@ Patch0:		%{name}-smarty.patch
 URL:		http://pear.php.net/package/PhpDocumentor/
 BuildRequires:	php-pear-PEAR >= 1:1.4.6
 BuildRequires:	rpm-php-pearprov >= 4.4.2-10.2
-BuildRequires:	rpmbuild(macros) >= 1.593
+BuildRequires:	rpmbuild(macros) >= 1.654
 Requires:	Smarty >= 2.6.10-4
 Requires:	php(core) >= %{php_min_version}
 Requires:	php(pcre)
@@ -37,7 +37,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # exclude optional dependencies
 # don't require %{php_pear_dir}/data files we provide.
-%define		_noautoreq	pear(phpDocumentor/.*) pear(%{php_pear_dir}/data/.*) pear(XML/Beautifier/.*) pear(HTML_TreeMenu-1.1.2/TreeMenu.php)
+%define		_noautoreq_pear phpDocumentor/.* %{php_pear_dir}/data/.* XML/Beautifier/.* HTML_TreeMenu-1.1.2/TreeMenu.php .*/phpDocumentor/common.inc.php
 
 %description
 The phpDocumentor tool is a standalone auto-documentor similar to
