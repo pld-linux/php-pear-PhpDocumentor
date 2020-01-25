@@ -7,7 +7,6 @@
 %define		_status		stable
 %define		_pearname	PhpDocumentor
 %define		php_min_version 5.0.0
-%include	/usr/lib/rpm/macros.php
 Summary:	%{_pearname} - provides automatic documenting of PHP API directly from source
 Summary(pl.UTF-8):	%{_pearname} - automatyczne tworzenie dokumentacji API PHP prosto ze źródeł
 Name:		php-pear-%{_pearname}
