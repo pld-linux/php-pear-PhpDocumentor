@@ -132,7 +132,7 @@ Documentation and tutorial manual PhpDocumentor
 
 %prep
 %pear_package_setup
-%patch0 -p1
+%patch -P0 -p1
 
 # remove bundled Smarty. use system one.
 mkdir plugins
